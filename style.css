@@ -661,14 +661,26 @@ body, html {
     }
 
     /* 3. 調整 Spotify 播放器位置 (讓它稍微往下沉一點) */
+/* --- Spotify Widget (電腦版設定) --- */
 .spotify-widget {
-        display: none !important; /* 強制隱藏，手機版不顯示 */
-    }
+    position: absolute;  /* 關鍵！一定要是 absolute 才會聽話 */
+    bottom: 120px;       /* 固定在底部上方 120px */
+    right: 40px;         /* 固定在右邊 */
+    width: 300px;        /* 電腦版寬度 */
+    z-index: 50;         /* 確保浮在最上層 */
+    transition: transform 0.2s;
+    display: block;      /* 確保電腦版是顯示的 */
+}
 
-    /* 4. 調整 Dock (確保它也是固定的) */
-    .dock-container {
-        position: fixed; /* 確保 Dock 永遠黏在螢幕最底下 */
-        bottom: 20px;
-        z-index: 100;
+/* --- 手機版專屬調整 --- */
+@media (max-width: 768px) {
+    
+    /* ... 這裡會有其他的 mobile 設定 ... */
+
+    /* 強制隱藏 Spotify */
+    .spotify-widget {
+        display: none !important; 
     }
+    
+    /* ... */
 }
