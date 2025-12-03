@@ -631,34 +631,49 @@ body, html {
     z-index: 3001;
 }
 
-/* 手機版調整 */
+/* --- 手機版專屬調整 --- */
 @media (max-width: 768px) {
-    .close-btn { top: 10px; right: 15px; }
 
-
-}
-
-/* --- Spotify Widget --- */
-.spotify-widget {
-    position: absolute;
-    bottom: 120px; /* 在 Dock 上方 */
-    right: 40px;   /* 放在右下角 */
-    width: 300px;
-    z-index: 50;    /* 確保不會被資料夾擋住 */
-    transition: transform 0.2s;
-}
-
-.spotify-widget:hover {
-    transform: scale(1.02);
-}
-
-/* 手機版位置調整 */
-@media (max-width: 768px) {
-    .spotify-widget {
-        bottom: 140px;
-        right: 50%;
-        transform: translateX(50%); /* 手機版置中 */
-        width: 70%;
+    /* 1. 關鍵修改：允許主頁捲動 */
+    #home-page {
+        overflow-y: auto;       /* 允許垂直捲動 */
+        height: 100%;           /* 確保高度填滿 */
+        -webkit-overflow-scrolling: touch; /* 讓滑動更順暢 (iOS) */
     }
-    .spotify-widget:hover { transform: translateX(50%) scale(1.02); }
+
+    /* 2. 調整資料夾容器，增加底部空間 */
+    #desktop-folders-container {
+        /* 維持原本的設定 */
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        row-gap: 20px;
+        column-gap: 15px;
+        justify-content: center;
+        width: 100%;
+        
+        /* --- 修改這裡 --- */
+        padding-top: 240px;     /* 上方避開標題 */
+        
+        /* 關鍵：下方增加超大留白，讓最後一排資料夾可以滑過 Spotify 播放器 */
+        padding-bottom: 350px;  
+        /* ---------------- */
+    }
+
+    /* 3. 調整 Spotify 播放器位置 (讓它稍微往下沉一點) */
+    .spotify-widget {
+        position: fixed; /* 改成 fixed，讓它固定在螢幕下方，不會跟著捲動亂跑 */
+        bottom: 110px;   /* 稍微離 Dock 近一點 (原本可能是 140px) */
+        width: 85%;      /* 寬度設定 */
+        right: 50%;
+        transform: translateX(50%);
+        z-index: 50;     /* 確保它浮在最上面 */
+    }
+
+    /* 4. 調整 Dock (確保它也是固定的) */
+    .dock-container {
+        position: fixed; /* 確保 Dock 永遠黏在螢幕最底下 */
+        bottom: 20px;
+        z-index: 100;
+    }
 }
