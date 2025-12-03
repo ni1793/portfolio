@@ -458,3 +458,72 @@ body, html {
         cursor: auto !important;
     }
 }
+
+/* --- 1. 影像作品 Icon --- */
+.video-icon {
+    /* 紫紅色漸層，很有影視感 */
+    background: linear-gradient(135deg, #662D8C 0%, #ED1E79 100%);
+}
+
+/* --- 2. 影片列表排版 --- */
+.video-grid {
+    display: grid;
+    /* 電腦版一排 2 個，比較大氣 */
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 30px;
+    padding-bottom: 50px;
+}
+
+/* --- 3. 影片容器 (RWD 關鍵) --- */
+.video-item {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.video-item:hover {
+    transform: translateY(-5px);
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    /* 這裡設定 16:9 的比例 */
+    aspect-ratio: 16 / 9; 
+    background: #000;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px 12px 0 0;
+}
+
+.video-info {
+    padding: 15px;
+}
+
+.video-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.video-info p {
+    margin: 0;
+    font-size: 13px;
+    color: #888;
+}
+
+/* 手機版改成一排 1 個 */
+@media (max-width: 768px) {
+    .video-grid {
+        grid-template-columns: 1fr; /* 一排一個 */
+        gap: 20px;
+    }
+}
