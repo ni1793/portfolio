@@ -71,6 +71,7 @@ body, html {
     padding: 10px;
     border-radius: 8px;
     transition: background 0.2s, transform 0.2s;
+    z-index: 10; /* 確保它浮在文字層的上面 */
 }
 
 .folder:hover {
@@ -253,10 +254,95 @@ body, html {
 .detail-content { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
 .detail-info h2 { margin-bottom: 10px; font-size: 2rem; }
 .detail-info p { line-height: 1.6; color: #555; margin-bottom: 30px; }
-.contact-card { max-width: 400px; margin: 80px auto; text-align: center; padding: 40px; background: #f5f5f7; border-radius: 20px; }
-.avatar { width: 80px; height: 80px; background: #8e8e93; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;}
-.info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e5e5e5; }
-.info-row a { color: var(--accent-blue); text-decoration: none; }
+/* --- 新的 Apple 風格聯絡人樣式 --- */
+.contact-body {
+    background: #f2f2f7;
+    height: calc(100% - 38px); /* 減掉標題列高度 */
+    overflow-y: auto;
+    padding-top: 30px;
+}
+
+.contact-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(to bottom, #f2f2f7, #ffffff 50%);
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+}
+
+.contact-avatar-large {
+    width: 100px; height: 100px;
+    background: #999;
+    border-radius: 50%;
+    color: white;
+    font-size: 40px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.contact-name { font-size: 26px; font-weight: 600; margin: 0; color: #000; }
+.contact-job { font-size: 15px; color: #8e8e93; margin: 5px 0 20px; }
+
+/* 快捷按鈕區 */
+.contact-actions {
+    display: flex; gap: 20px; width: 100%; justify-content: center;
+}
+
+.action-btn {
+    display: flex; flex-direction: column; align-items: center;
+    text-decoration: none; color: #007AFF; width: 60px;
+}
+
+.action-icon {
+    width: 40px; height: 40px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 6px;
+    transition: transform 0.1s;
+}
+
+.action-btn:active .action-icon { background: #e5e5e5; transform: scale(0.95); }
+.action-btn span { font-size: 11px; }
+
+/* 資訊列表區 */
+.contact-list {
+    background: #fff;
+    border-radius: 12px;
+    margin: 0 20px 40px;
+    padding: 0 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.list-group {
+    padding: 15px 0;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.list-group:last-child { border-bottom: none; }
+
+.list-label { font-size: 12px; color: #007AFF; text-transform: lowercase; }
+.list-value { font-size: 16px; color: #000; }
+.list-value a { text-decoration: none; color: #000; }
+
+/* 社群 Icon */
+.social-row { display: flex; gap: 15px; margin-top: 5px; }
+.social-link { font-size: 24px; color: #8e8e93; transition: color 0.2s; }
+.social-link.instagram:hover { color: #E1306C; }
+.social-link.behance:hover { color: #1769ff; }
+.social-link.facebook:hover { color: #1877F2; }
+
+/* 手機版適配 */
+@media (max-width: 768px) {
+    .contact-list { margin: 0 15px 40px; }
+}
 
 /* --- 手機版調整 --- */
 @media (max-width: 768px) {
@@ -548,4 +634,31 @@ body, html {
 /* 手機版調整 */
 @media (max-width: 768px) {
     .close-btn { top: 10px; right: 15px; }
+
+
+}
+
+/* --- Spotify Widget --- */
+.spotify-widget {
+    position: absolute;
+    bottom: 120px; /* 在 Dock 上方 */
+    right: 40px;   /* 放在右下角 */
+    width: 300px;
+    z-index: 50;    /* 確保不會被資料夾擋住 */
+    transition: transform 0.2s;
+}
+
+.spotify-widget:hover {
+    transform: scale(1.02);
+}
+
+/* 手機版位置調整 */
+@media (max-width: 768px) {
+    .spotify-widget {
+        bottom: 140px;
+        right: 50%;
+        transform: translateX(50%); /* 手機版置中 */
+        width: 70%;
+    }
+    .spotify-widget:hover { transform: translateX(50%) scale(1.02); }
 }
