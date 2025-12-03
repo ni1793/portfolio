@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NI - Graphic Designer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<body>
+
+    <section id="login-page">
+        <div class="top-bar">
+            <span><i class="fas fa-wifi"></i></span>
+            <span>100% <i class="fas fa-battery-full"></i></span>
+        </div>
+
+        <div class="login-content">
+            <div class="date-time">
+                <h1 id="clock-time">12:00</h1>
+                <p id="clock-date">Monday, June 5</p>
+            </div>
+
+            <div class="user-login">
+                <div class="login-avatar">NI</div>
+                <h3 class="login-name">NI</h3>
+                
+                <div class="password-wrapper" onclick="unlockScreen()">
+                    <div class="password-input">
+                        <span>Click to Enter</span>
+                        <button class="enter-btn"><i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <p class="hint">Touch ID or Enter Password</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="home-page" class="page">
+        <div class="hero-text-container" id="hero-text">
+            <h1>HEY, I'M NI</h1>
+            <h2>GRAPHIC DESIGNER</h2>
+        </div>
+        <div id="desktop-folders-container"></div>
+<div class="dock-container">
+    
+    <div class="dock-item" onclick="openPhotoGallery()">
+        <div class="app-icon photos-icon">
+            <i class="fas fa-images"></i>
+        </div>
+        <span class="tooltip">照片</span>
+    </div>
+
+    <div class="dock-item" onclick="navigateTo('contact-page')">
+        <div class="app-icon contact-icon">
+            <i class="fas fa-address-book"></i>
+        </div>
+        <span class="tooltip">聯絡我</span>
+    </div>
+
+</div>
+    </section>
+
+<div id="project-modal" class="modal-overlay hidden" onclick="closeProjectModal()">
+        
+        <div class="finder-window" onclick="event.stopPropagation()">
+            
+            <div class="finder-header">
+                <div class="traffic-lights">
+                    <div class="traffic-light close" onclick="closeProjectModal()"></div>
+                    <div class="traffic-light minimize"></div>
+                    <div class="traffic-light maximize"></div>
+                </div>
+                <span class="finder-title" id="detail-title">Project Name</span>
+            </div>
+
+            <div class="finder-content" id="detail-content">
+                </div>
+        </div>
+    </div>
+    <section id="contact-page" class="page">
+         <div class="window-header">
+            <button class="back-btn" onclick="navigateTo('home-page')"><i class="fas fa-times"></i> Close</button>
+            <span class="window-title">Contact Card</span>
+        </div>
+        <div class="contact-card">
+            <div class="avatar">NI</div>
+            <h3>NI DESIGN</h3>
+            <p class="role">Graphic Designer</p>
+            <div class="contact-info">
+                <div class="info-row">
+                    <span class="label">Email</span>
+                    <a href="mailto:ni@example.com">ni@example.com</a>
+                </div>
+                <div class="info-row">
+                    <span class="label">Instagram</span>
+                    <a href="#" target="_blank">@ni_design</a>
+                </div>
+            </div>
+        </div>
+    </section>
+<div id="lightbox" class="lightbox-overlay hidden" onclick="closeLightbox()">
+        <span class="close-btn">&times;</span>
+        <img id="lightbox-img" src="" alt="Full View">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

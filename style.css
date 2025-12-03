@@ -1,0 +1,551 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #1d1d1f;
+    --accent-blue: #0071e3;
+    --folder-color: #5fc9f8;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    overflow: hidden; 
+    color: var(--text-color);
+    user-select: none; /* 防止選取文字，讓操作更像桌面 */
+}
+
+/* 頁面切換基礎設定 */
+.page {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: scale(0.95);
+    background: var(--bg-color);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.page.active {
+    opacity: 1; pointer-events: auto; transform: scale(1); z-index: 10;
+}
+
+/* 主頁設定 */
+#home-page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* 中央文字 */
+.hero-text-container {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 5; /* 確保文字不會被資料夾蓋住 */
+    pointer-events: none; /* 讓滑鼠可以點穿文字區塊 */
+}
+.hero-text-container h1 { font-size: 5rem; margin: 0; font-weight: 800; }
+.hero-text-container h2 { font-size: 1.5rem; margin-top: 10px; color: #86868b; letter-spacing: 2px; }
+
+/* --- 散落的資料夾樣式 --- */
+#desktop-folders-container {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 2;
+}
+
+.folder {
+    position: absolute; /* 關鍵：絕對定位 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    width: 90px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.folder:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* 類似 macOS 選取效果 */
+}
+
+.folder:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
+}
+
+.folder-icon svg {
+    width: 64px;
+    height: 64px;
+    fill: var(--folder-color);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.folder-name {
+    margin-top: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    color: #333;
+    line-height: 1.3;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 最多兩行 */
+    -webkit-box-orient: vertical;
+}
+
+/* 底部 Dock */
+.dock-container {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(240, 240, 240, 0.8);
+    backdrop-filter: blur(20px);
+    padding: 10px 20px;
+    border-radius: 24px;
+    display: flex;
+    gap: 15px;
+    z-index: 100;
+}
+/* --- 懸浮視窗 (Project Modal) --- */
+
+/* 1. 背景遮罩層 */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.2); /* 輕微變暗 */
+    backdrop-filter: blur(2px);     /* 背景模糊，凸顯視窗 */
+    z-index: 2000; /* 比桌面高，比 Login 低 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+/* 隱藏時的狀態 */
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* 2. Finder 視窗本體 */
+.finder-window {
+    width: 80%;
+    max-width: 900px;
+    height: 80vh; /* 高度佔螢幕 80% */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    transform: scale(1);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 彈跳動畫 */
+    border: 1px solid rgba(0,0,0,0.1);
+    overflow: hidden; /* 圓角裁切 */
+}
+
+/* 視窗彈出動畫 */
+.modal-overlay.hidden .finder-window {
+    transform: scale(0.9);
+}
+
+/* 3. 頂部工具列 (Traffic Lights) */
+.finder-header {
+    height: 38px;
+    background: linear-gradient(to bottom, #f0f0f0, #e6e6e6);
+    border-bottom: 1px solid #c0c0c0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    position: relative;
+    flex-shrink: 0; /* 防止被壓縮 */
+}
+
+.traffic-lights {
+    display: flex;
+    gap: 8px;
+}
+
+.traffic-light {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.traffic-light.close { background: #ff5f56; border: 1px solid #e0443e; }
+.traffic-light.minimize { background: #ffbd2e; border: 1px solid #dea123; }
+.traffic-light.maximize { background: #27c93f; border: 1px solid #1aab29; }
+
+/* 滑鼠移過去顯示符號 (細節) */
+.traffic-lights:hover .traffic-light.close::before { content: '×'; position: absolute; color: #550000; font-size: 10px; margin-left: 3px; margin-top: -1px; opacity: 0.6; }
+
+.finder-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: 600;
+    color: #444;
+    font-size: 13px;
+}
+
+/* 4. 內容區域 */
+.finder-content {
+    flex: 1;
+    overflow-y: auto; /* 只有這裡捲動 */
+    padding: 40px;
+    background: #fff;
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    .finder-window {
+        width: 90%;
+        height: 85vh;
+    }
+    .finder-content {
+        padding: 20px;
+    }
+    .finder-title {
+        font-size: 12px;   /* 手機上字體再小一點 */
+        max-width: 50%;    /* 手機寬度窄，限制更嚴格一點 */
+    }
+}
+.dock-item { position: relative; cursor: pointer; transition: transform 0.2s; }
+.dock-item:hover { transform: translateY(-10px); }
+.app-icon {
+    width: 50px; height: 50px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: white;
+    background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+}
+.tooltip {
+    position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.7); color: white; padding: 4px 8px;
+    border-radius: 4px; font-size: 12px; opacity: 0; pointer-events: none;
+    transition: opacity 0.2s; white-space: nowrap;
+}
+.dock-item:hover .tooltip { opacity: 1; }
+
+/* 視窗與詳情頁 */
+.window-header {
+    height: 50px; padding: 0 20px; display: flex; align-items: center;
+    border-bottom: 1px solid #e5e5e5; background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100;
+}
+.back-btn { border: none; background: none; color: var(--accent-blue); font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+.window-title { position: absolute; left: 50%; transform: translateX(-50%); font-weight: 600; font-size: 15px; }
+
+#detail-page, #contact-page { overflow-y: auto; }
+.detail-content { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+.detail-info h2 { margin-bottom: 10px; font-size: 2rem; }
+.detail-info p { line-height: 1.6; color: #555; margin-bottom: 30px; }
+.contact-card { max-width: 400px; margin: 80px auto; text-align: center; padding: 40px; background: #f5f5f7; border-radius: 20px; }
+.avatar { width: 80px; height: 80px; background: #8e8e93; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;}
+.info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e5e5e5; }
+.info-row a { color: var(--accent-blue); text-decoration: none; }
+
+/* --- 手機版調整 --- */
+@media (max-width: 768px) {
+    /* 手機上可能不想亂數散落，改為網格排列比較好操作 */
+    #desktop-folders-container {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        padding: 20px;
+        padding-top: 150px; /* 避開標題 */
+    }
+    .folder { position: static; width: auto; }
+    .hero-text-container { top: 100px; transform: translateX(-50%); }
+    .hero-text-container h1 { font-size: 2.5rem; }
+}
+
+#login-page {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+
+    /* --- 修改這裡 --- */
+    /* url('圖片檔名') -> 記得副檔名要對 (.jpg 或 .png) */
+    background-image: url('wallpaper.jpg'); 
+    
+    /* 讓圖片填滿整個螢幕，不會變形或留白 */
+    background-size: cover;
+    
+    /* 讓圖片保持居中 */
+    background-position: center;
+    /* --- 修改結束 --- */
+
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s;
+}
+
+/* 解鎖時的動畫 Class */
+#login-page.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(1.1); /* 像 macOS 一樣稍微放大消失 */
+    filter: blur(10px);
+}
+
+.top-bar {
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.login-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 15vh;
+    width: 100%;
+}
+
+.date-time {
+    text-align: center;
+    margin-bottom: 150px;
+}
+
+.date-time h1 {
+    font-size: 6rem;
+    font-weight: 200;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.date-time p {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 5px 0 0;
+    opacity: 0.9;
+}
+
+.user-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn Up 1s ease;
+}
+
+.login-avatar {
+    width: 100px; height: 100px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: bold; color: #555;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    margin-bottom: 15px;
+}
+
+.login-name {
+    font-size: 24px;
+    margin: 0 0 20px;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* 模擬輸入框 */
+.password-wrapper {
+    cursor: pointer;
+    text-align: center;
+}
+
+.password-input {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 8px 8px 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 200px;
+    transition: background 0.2s;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.password-input:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.password-input span {
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.enter-btn {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.8);
+    color: #333;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.hint {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* --- 手機版專屬調整 --- */
+@media (max-width: 768px) {
+    
+/* 強制縮小手機版視窗內的大標題 */
+    .detail-info h2 {
+        font-size: 1.2rem !important;  /* 加了 !important 才會生效 */
+        line-height: 1.3 !important;
+        margin-bottom: 5px !important;
+    }
+    
+    /* 順便把下面的描述文字也縮小一點點，看起來比較協調 */
+    .detail-info p {
+        font-size: 0.9rem !important;
+    }
+
+    /* 2. 資料夾排列調整 */
+    #desktop-folders-container {
+        position: static; 
+        display: grid;
+        /* 維持一排 3 個 */
+        grid-template-columns: repeat(3, auto); /* 改成 auto 讓它們緊湊居中 */
+        
+        /* 調整間距 */
+        row-gap: 20px;
+        column-gap: 15px;
+        
+        padding: 20px;
+        
+        /* --- 修改重點 --- */
+        padding-top: 240px; /* 加大距離，避開標題文字 */
+        justify-content: center; /* 讓整塊資料夾區域水平置中 */
+        align-content: start;    /* 內容靠上 */
+        /* ---------------- */
+        
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* ... 下面的 .folder 等設定保持不變 ... */
+}
+
+/* --- 1. 相簿 Icon 樣式 --- */
+.photos-icon {
+    /* 使用藍色/青色漸層，跟綠色的聯絡人區隔開 */
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    /* 或者你喜歡像 iPhone 相簿那種彩色的，可以用下面這行： */
+    /* background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); */
+}
+
+/* --- 2. 相簿內容網格排版 (Photo Grid) --- */
+.photo-grid {
+    display: grid;
+    /* 自動填滿，每張最小 200px (手機會自動變小) */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px; /* 照片之間的間距 */
+    padding-top: 20px;
+}
+
+.photo-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 讓圖片填滿格子不變形 */
+    aspect-ratio: 1 / 1; /* 強制正方形 (可選，若想要保留原比例請刪除這行) */
+    transition: transform 0.3s ease;
+    background: #eee;
+}
+
+.photo-item:hover img {
+    transform: scale(1.05); /* 滑鼠移過去稍微放大 */
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    .photo-grid {
+        /* 手機上一排兩張 */
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px;
+    }
+}
+/* --- 圖片放大燈箱 (Lightbox) --- */
+.lightbox-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9); /* 深黑色半透明背景 */
+    z-index: 3000; /* 比所有東西都高 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    cursor: zoom-out; /* 游標變更，提示可以關閉 */
+}
+
+.lightbox-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.lightbox-overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    transform: scale(1);
+    transition: transform 0.3s;
+    cursor: default; /* 圖片上游標還原 */
+}
+
+/* 顯示時的動畫 */
+.lightbox-overlay.hidden img {
+    transform: scale(0.8);
+}
+
+.close-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 3001;
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    .close-btn { top: 10px; right: 15px; }
+}
