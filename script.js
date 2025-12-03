@@ -321,3 +321,61 @@ document.addEventListener('keydown', (e) => {
         unlockScreen();
     }
 });
+
+// ==========================================
+// 9. 自定義滑鼠游標邏輯
+// ==========================================
+const cursor = document.getElementById('custom-cursor');
+
+// 只有在非手機裝置才執行
+if (window.innerWidth > 768 && cursor) {
+
+    // 1. 跟隨滑鼠移動
+    document.addEventListener('mousemove', (e) => {
+        // 只有當不在 spotify 上面時，才顯示
+        // (透過下面的 mouseenter/leave 控制 opacity，這裡只要負責動就好)
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        
+        // 初始載入時顯示 (加個簡單判斷避免衝突)
+        if (!e.target.closest('.spotify-widget')) {
+             cursor.style.opacity = '1';
+        }
+    });
+
+    // 2. 點擊效果
+    document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+
+    // 3. 智慧偵測：滑過可點擊物件變大
+    const clickables = document.querySelectorAll('a, button, .folder, .dock-item, .password-wrapper, .traffic-light, .window-header span');
+    
+    // 靜態物件
+    clickables.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+    
+    // 動態物件 (相簿、聯絡人按鈕)
+    document.addEventListener('mouseover', (e) => {
+        if (e.target.closest('.photo-item') || e.target.closest('.action-btn')) {
+            cursor.classList.add('hovering');
+        }
+    });
+    document.addEventListener('mouseout', (e) => {
+        if (e.target.closest('.photo-item') || e.target.closest('.action-btn')) {
+            cursor.classList.remove('hovering');
+        }
+    });
+
+    // 4. ▼▼▼ 新增：Spotify 區域游標處理 ▼▼▼
+    const spotifyWidget = document.querySelector('.spotify-widget');
+    if (spotifyWidget) {
+        spotifyWidget.addEventListener('mouseenter', () => {
+            cursor.style.opacity = '0'; // 進去時隱藏圓圈，只剩系統箭頭
+        });
+        spotifyWidget.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '1'; // 出來時圓圈浮現
+        });
+    }
+}

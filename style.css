@@ -404,3 +404,57 @@ body, html {
     .folder { width: auto; position: static; } /* 重置資料夾寬度 */
     .close-btn { top: 10px; right: 15px; }
 }
+/* =========================================
+   自定義滑鼠游標 (Custom Cursor)
+   ========================================= */
+
+/* 1. 隱藏原本的箭頭游標 (只對電腦版生效) */
+@media (min-width: 769px) {
+    body, a, button, .folder, .dock-item {
+        cursor: none !important; /* 強制隱藏系統游標 */
+    }
+}
+
+/* 2. 自定義圓圈樣式 */
+#custom-cursor {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 20px; 
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.2); /* 半透明黑色，像 Apple 的觸控板游標 */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 加一點白邊增加對比 */
+    border-radius: 50%;
+    pointer-events: none; /* 關鍵！讓點擊可以穿透它，點到下面的東西 */
+    z-index: 99999; /* 確保浮在最最最上面 */
+    transform: translate(-50%, -50%); /* 讓圓心對準滑鼠 */
+    transition: width 0.2s, height 0.2s, background-color 0.2s, transform 0.1s;
+    
+    /* 預設隱藏，等 JS偵測到滑鼠動了才顯示，避免一開始在左上角 */
+    opacity: 0; 
+}
+
+/* 3. 點擊時的縮放效果 (變小) */
+#custom-cursor.clicking {
+    transform: translate(-50%, -50%) scale(0.8); /* 縮小到 80% */
+    background-color: rgba(0, 0, 0, 0.5); /* 顏色變深 */
+}
+
+/* 4. 滑過可點擊物件時的效果 (變大) - 增加互動感 */
+#custom-cursor.hovering {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 113, 227, 0.1); /* 變成淡淡的藍色 */
+    border-color: rgba(0, 113, 227, 0.5);
+}
+
+/* --- 手機版強制隱藏 --- */
+@media (max-width: 768px) {
+    #custom-cursor {
+        display: none !important;
+    }
+    /* 恢復手機原本的點擊游標 */
+    body {
+        cursor: auto !important;
+    }
+}
