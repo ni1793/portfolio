@@ -656,18 +656,13 @@ body, html {
         padding-top: 240px;     /* 上方避開標題 */
         
         /* 關鍵：下方增加超大留白，讓最後一排資料夾可以滑過 Spotify 播放器 */
-        padding-bottom: 350px;  
+        padding-bottom: 120px;  
         /* ---------------- */
     }
 
     /* 3. 調整 Spotify 播放器位置 (讓它稍微往下沉一點) */
-    .spotify-widget {
-        position: fixed; /* 改成 fixed，讓它固定在螢幕下方，不會跟著捲動亂跑 */
-        bottom: 110px;   /* 稍微離 Dock 近一點 (原本可能是 140px) */
-        width: 85%;      /* 寬度設定 */
-        right: 50%;
-        transform: translateX(50%);
-        z-index: 50;     /* 確保它浮在最上面 */
+.spotify-widget {
+        display: none !important; /* 強制隱藏，手機版不顯示 */
     }
 
     /* 4. 調整 Dock (確保它也是固定的) */
