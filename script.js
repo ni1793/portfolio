@@ -10,7 +10,9 @@ const projectsData = [
         images: [
             "images/project1/01.jpg",
             "images/project1/02.jpg",
-            "images/project1/03.jpg"
+            "images/project1/03.jpg",
+            "images/project1/04.jpg",
+            "images/project1/05.jpg"
         ]
     },
     {
