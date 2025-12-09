@@ -1,529 +1,429 @@
-:root {
-    --bg-color: #ffffff;
-    --text-color: #1d1d1f;
-    --accent-blue: #0071e3;
-    --folder-color: #5fc9f8;
+:root { --font-main: 'Inter', sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: #ffffff;
+    font-family: var(--font-main);
+    overflow-x: hidden;
+    /* 強制隱藏系統滑鼠，使用自訂游標 */
+    cursor: none !important;
 }
 
-body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
-    overflow: hidden; 
-    color: var(--text-color);
-    user-select: none; /* 防止選取文字 */
+/* 讓可點擊元素也隱藏系統游標 */
+a, button, .folder, .work-card, .custom-dock-item {
+    cursor: none !important;
 }
 
-/* =========================================
-   1. 頁面切換與主結構
-   ========================================= */
-.page {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    transform: scale(0.95);
-    background: var(--bg-color);
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
+/* WebGL Canvas */
+#canvas-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    z-index: 0; pointer-events: none;
 }
 
-.page.active {
-    opacity: 1; pointer-events: auto; transform: scale(1); z-index: 10;
+/* Hero Section */
+.hero-section {
+    position: relative; z-index: 1; height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    transition: opacity 0.5s;
 }
 
-#home-page {
+.navbar {
+    position: absolute; top: 0; width: 100%; padding: 30px 50px;
+    display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; color: #111;
+}
+
+/* 1. 針對時間顯示的優化 */
+#current-time {
+    font-family: 'Inter', monospace; /* 確保數字風格 */
+    font-variant-numeric: tabular-nums; /* 關鍵：讓數字等寬，秒數跳動時不會左右晃動 */
+min-width: auto;
+white-space: nowrap; /* 確保 "in Taiwan" 不會掉到下一行 */
+}
+
+/* 2. 針對右上角 NI 按鈕的優化 */
+.contact-trigger {
+    cursor: pointer !important; /* 強制顯示點擊手勢 (即使有用自訂游標) */
     position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* 電腦版不捲動 */
-}
-
-/* 中央文字 (關鍵：pointer-events: none 讓滑鼠可以穿透它點到資料夾) */
-.hero-text-container {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 5; 
-    pointer-events: none; 
-}
-.hero-text-container h1 { font-size: 5rem; margin: 0; font-weight: 800; }
-.hero-text-container h2 { font-size: 1.5rem; margin-top: 10px; color: #86868b; letter-spacing: 2px; }
-
-/* =========================================
-   2. 桌面資料夾
-   ========================================= */
-#desktop-folders-container {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 2;
-}
-
-.folder {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    width: 90px;
-    padding: 10px;
-    border-radius: 8px;
-    transition: background 0.2s, transform 0.2s;
-    z-index: 10; /* 確保浮在文字上面 */
-}
-
-.folder:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.folder:active {
-    transform: scale(0.95);
-    filter: brightness(0.9);
-}
-
-.folder-icon svg {
-    width: 64px; height: 64px;
-    fill: var(--folder-color);
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-}
-
-.folder-name {
-    margin-top: 5px;
-    font-size: 13px;
-    font-weight: 500;
-    text-align: center;
-    color: #333;
-    line-height: 1.3;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-/* =========================================
-   3. 底部 Dock 與 Icon
-   ========================================= */
-.dock-container {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(240, 240, 240, 0.8);
-    backdrop-filter: blur(20px);
-    padding: 10px 20px;
-    border-radius: 24px;
-    display: flex;
-    gap: 15px;
-    z-index: 100;
-}
-
-.dock-item { position: relative; cursor: pointer; transition: transform 0.2s; }
-.dock-item:hover { transform: translateY(-10px); }
-
-.app-icon {
-    width: 50px; height: 50px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; color: white;
-}
-
-.contact-icon { background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); }
-.photos-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-
-.tooltip {
-    position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-    background: rgba(0,0,0,0.7); color: white; padding: 4px 8px;
-    border-radius: 4px; font-size: 12px; opacity: 0; pointer-events: none;
-    transition: opacity 0.2s; white-space: nowrap;
-}
-.dock-item:hover .tooltip { opacity: 1; }
-
-/* =========================================
-   4. 懸浮視窗 (Project Modal / Finder)
-   ========================================= */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(2px);
-    z-index: 2000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
     transition: opacity 0.3s ease;
 }
 
-.modal-overlay.hidden {
-    opacity: 0; pointer-events: none; visibility: hidden;
+.contact-trigger:hover {
+    opacity: 0.5; /* 滑鼠經過時變半透明，增加互動感 */
 }
 
-.finder-window {
-    width: 80%; max-width: 900px; height: 80vh;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 12px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    display: flex; flex-direction: column;
-    transform: scale(1);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 1px solid rgba(0,0,0,0.1);
-    overflow: hidden;
-}
-
-.modal-overlay.hidden .finder-window { transform: scale(0.9); }
-
-.finder-header {
-    height: 38px;
-    background: linear-gradient(to bottom, #f0f0f0, #e6e6e6);
-    border-bottom: 1px solid #c0c0c0;
-    display: flex; align-items: center; padding: 0 16px;
-    position: relative; flex-shrink: 0;
-}
-
-.traffic-lights { display: flex; gap: 8px; }
-.traffic-light { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-.traffic-light.close { background: #ff5f56; border: 1px solid #e0443e; }
-.traffic-light.minimize { background: #ffbd2e; border: 1px solid #dea123; }
-.traffic-light.maximize { background: #27c93f; border: 1px solid #1aab29; }
-.traffic-lights:hover .traffic-light.close::before { content: '×'; position: absolute; color: #550000; font-size: 10px; margin-left: 3px; margin-top: -1px; opacity: 0.6; }
-
-.finder-title {
-    position: absolute; left: 50%; transform: translateX(-50%);
-    font-weight: 600; color: #444; font-size: 13px;
-    white-space: nowrap; max-width: 60%; overflow: hidden; text-overflow: ellipsis;
-}
-
-.finder-content {
-    flex: 1; overflow-y: auto; padding: 40px; background: #fff;
-}
-
-.window-header {
-    height: 50px; padding: 0 20px; display: flex; align-items: center;
-    border-bottom: 1px solid #e5e5e5; background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100;
-}
-.back-btn { border: none; background: none; color: var(--accent-blue); font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-.window-title { position: absolute; left: 50%; transform: translateX(-50%); font-weight: 600; font-size: 15px; }
-
-/* =========================================
-   5. Apple 風格聯絡人樣式
-   ========================================= */
-.contact-body {
-    background: #f2f2f7;
-    height: calc(100% - 50px);
-    overflow-y: auto;
-    padding-top: 30px;
-}
-
-.contact-header {
-    display: flex; flex-direction: column; align-items: center;
-    background: linear-gradient(to bottom, #f2f2f7, #ffffff 50%);
-    padding-bottom: 30px; margin-bottom: 20px;
-}
-
-.contact-avatar-large {
-    width: 100px; height: 100px; background: #999; border-radius: 50%;
-    color: white; font-size: 40px; display: flex; align-items: center; justify-content: center;
-    font-weight: bold; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.contact-name { font-size: 26px; font-weight: 600; margin: 0; color: #000; }
-.contact-job { font-size: 15px; color: #8e8e93; margin: 5px 0 20px; }
-
-.contact-actions { display: flex; gap: 20px; width: 100%; justify-content: center; }
-.action-btn { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #007AFF; width: 60px; }
-.action-icon {
-    width: 40px; height: 40px; background: #ffffff; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; font-size: 18px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 6px; transition: transform 0.1s;
-}
-.action-btn:active .action-icon { background: #e5e5e5; transform: scale(0.95); }
-.action-btn span { font-size: 11px; }
-
-.contact-list {
-    background: #fff; border-radius: 12px; margin: 0 20px 40px; padding: 0 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-}
-.list-group { padding: 15px 0; border-bottom: 1px solid #e5e5e5; display: flex; flex-direction: column; gap: 5px; }
-.list-group:last-child { border-bottom: none; }
-.list-label { font-size: 12px; color: #007AFF; text-transform: lowercase; }
-.list-value { font-size: 16px; color: #000; }
-.list-value a { text-decoration: none; color: #000; }
-
-.social-row { display: flex; gap: 15px; margin-top: 5px; }
-.social-link { font-size: 24px; color: #8e8e93; transition: color 0.2s; }
-.social-link.instagram:hover { color: #E1306C; }
-.social-link.behance:hover { color: #1769ff; }
-.social-link.facebook:hover { color: #1877F2; }
-
-/* =========================================
-   6. 登入畫面 (Login)
-   ========================================= */
-#login-page {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('wallpaper.jpg'); 
-    background-size: cover; background-position: center;
-    z-index: 9999; display: flex; flex-direction: column; align-items: center;
-    color: white; transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s;
-}
-
-#login-page.hidden { opacity: 0; pointer-events: none; transform: scale(1.1); filter: blur(10px); }
-
-.top-bar { width: 100%; padding: 10px 20px; display: flex; justify-content: flex-end; gap: 15px; box-sizing: border-box; font-size: 14px; }
-.login-content { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 15vh; width: 100%; }
-.date-time { text-align: center; margin-bottom: 150px; }
-.date-time h1 { font-size: 6rem; font-weight: 200; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-.date-time p { font-size: 1.5rem; font-weight: 400; margin: 5px 0 0; opacity: 0.9; }
-
-.user-login { display: flex; flex-direction: column; align-items: center; animation: fadeIn Up 1s ease; }
-.login-avatar {
-    width: 100px; height: 100px; background: #f0f0f0; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 32px; font-weight: bold; color: #555;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 15px;
-}
-.login-name { font-size: 24px; margin: 0 0 20px; font-weight: 500; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-
-.password-wrapper { cursor: pointer; text-align: center; }
-.password-input {
-    background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(10px); border-radius: 20px;
-    padding: 8px 8px 8px 20px; display: flex; align-items: center; justify-content: space-between;
-    width: 200px; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.1);
-}
-.password-input:hover { background: rgba(255, 255, 255, 0.35); }
-.password-input span { font-size: 13px; opacity: 0.8; }
-.enter-btn {
-    width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(255,255,255,0.8);
-    color: #333; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer;
-}
-.hint { margin-top: 10px; font-size: 12px; opacity: 0.6; }
-
-/* =========================================
-   7. 相簿與燈箱 (Lightbox)
-   ========================================= */
-.photo-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px; padding-top: 20px;
-}
-.photo-item { position: relative; overflow: hidden; border-radius: 8px; cursor: pointer; }
-.photo-item img {
-    width: 100%; height: 100%; object-fit: cover; aspect-ratio: 1 / 1;
-    transition: transform 0.3s ease; background: #eee;
-}
-.photo-item:hover img { transform: scale(1.05); }
-
-.lightbox-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.9); z-index: 3000;
-    display: flex; justify-content: center; align-items: center;
-    opacity: 1; transition: opacity 0.3s ease; cursor: zoom-out;
-}
-.lightbox-overlay.hidden { opacity: 0; pointer-events: none; visibility: hidden; }
-.lightbox-overlay img {
-    max-width: 90%; max-height: 90%; border-radius: 4px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5); transform: scale(1);
-    transition: transform 0.3s; cursor: default;
-}
-.lightbox-overlay.hidden img { transform: scale(0.8); }
-.close-btn { position: absolute; top: 30px; right: 30px; color: white; font-size: 40px; cursor: pointer; z-index: 3001; }
-
-/* =========================================
-   8. Spotify Widget (電腦版設定)
-   ========================================= */
-.spotify-widget {
-    position: absolute;  /* 電腦版絕對定位 */
-    bottom: 120px;       
-    right: 40px;         
-    width: 300px;        
-    z-index: 50;         /* 確保最上層 */
-    transition: transform 0.2s;
-    display: block;      /* 電腦版顯示 */
-}
-.spotify-widget:hover { transform: scale(1.02); }
-
-
-/* =========================================
-   9. 手機版專屬調整 (所有手機設定都在這裡)
-   ========================================= */
-@media (max-width: 768px) {
-
-    /* (A) 強制隱藏 Spotify */
-    .spotify-widget {
-        display: none !important; 
-    }
-
-    /* (B) 允許主頁捲動 */
-    #home-page {
-        overflow-y: auto;       
-        height: 100%;           
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* (C) 調整資料夾容器 */
-    #desktop-folders-container {
-        position: static;
-        display: grid;
-        grid-template-columns: repeat(3, auto);
-        row-gap: 20px;
-        column-gap: 15px;
-        justify-content: center;
-        width: 100%;
-        padding-top: 240px;     
-        padding-bottom: 120px;  
-    }
-    
-    /* (D) 調整視窗內文字大小 */
-    .detail-info h2 {
-        font-size: 1.2rem !important;
-        line-height: 1.3 !important;
-        margin-bottom: 5px !important;
-    }
-    .detail-info p {
-        font-size: 0.9rem !important;
-    }
-    
-    /* (E) 視窗大小 */
-    .finder-window { width: 90%; height: 85vh; }
-    .finder-content { padding: 20px; }
-    .finder-title { font-size: 12px; max-width: 50%; }
-
-    /* (F) 相簿網格 */
-    .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    
-    /* (G) 聯絡人與文字調整 */
-    .contact-list { margin: 0 15px 40px; }
-    .hero-text-container { top: 100px; transform: translateX(-50%); }
-    .hero-text-container h1 { font-size: 2.5rem; }
-    .folder { width: auto; position: static; } /* 重置資料夾寬度 */
-    .close-btn { top: 10px; right: 15px; }
-}
-/* =========================================
-   自定義滑鼠游標 (Custom Cursor)
-   ========================================= */
-
-/* 1. 隱藏原本的箭頭游標 (只對電腦版生效) */
-@media (min-width: 769px) {
-    body, a, button, .folder, .dock-item {
-        cursor: none !important; /* 強制隱藏系統游標 */
-    }
-}
-
-/* 2. 自定義圓圈樣式 */
-#custom-cursor {
-    position: fixed;
+/* 3. 確保 Navbar 字體大小與之前一致 */
+.navbar {
+    /* 原本的設定保持不變 */
+    position: absolute; 
     top: 0; 
-    left: 0;
-    width: 20px; 
-    height: 20px;
-    background-color: rgba(0, 0, 0, 0.2); /* 半透明黑色，像 Apple 的觸控板游標 */
-    border: 1px solid rgba(255, 255, 255, 0.5); /* 加一點白邊增加對比 */
-    border-radius: 50%;
-    pointer-events: none; /* 關鍵！讓點擊可以穿透它，點到下面的東西 */
-    z-index: 99999; /* 確保浮在最最最上面 */
-    transform: translate(-50%, -50%); /* 讓圓心對準滑鼠 */
-    transition: width 0.2s, height 0.2s, background-color 0.2s, transform 0.1s;
-    
-    /* 預設隱藏，等 JS偵測到滑鼠動了才顯示，避免一開始在左上角 */
-    opacity: 0; 
+    width: 100%; 
+    padding: 30px 50px;
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 14px; /* 這就是您說的 "跟 in Taiwan 一樣大小" */
+    font-weight: 500; 
+    color: #111;
+    z-index: 10; /* 確保在最上層 */
 }
-
-/* 3. 點擊時的縮放效果 (變小) */
-#custom-cursor.clicking {
-    transform: translate(-50%, -50%) scale(0.8); /* 縮小到 80% */
-    background-color: rgba(0, 0, 0, 0.5); /* 顏色變深 */
-}
-
-/* 4. 滑過可點擊物件時的效果 (變大) - 增加互動感 */
-#custom-cursor.hovering {
-    width: 40px;
-    height: 40px;
-    background-color: rgba(0, 113, 227, 0.1); /* 變成淡淡的藍色 */
-    border-color: rgba(0, 113, 227, 0.5);
-}
-
-/* --- 手機版強制隱藏 --- */
-@media (max-width: 768px) {
-    #custom-cursor {
-        display: none !important;
-    }
-    /* 恢復手機原本的點擊游標 */
-    body {
-        cursor: auto !important;
-    }
-}
-
-/* --- 1. 影像作品 Icon --- */
-.video-icon {
-    /* 紫紅色漸層，很有影視感 */
-    background: linear-gradient(135deg, #662D8C 0%, #ED1E79 100%);
-}
-
-/* --- 2. 影片列表排版 --- */
-.video-grid {
-    display: grid;
-    /* 電腦版一排 2 個，比較大氣 */
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 30px;
-    padding-bottom: 50px;
-}
-
-/* --- 3. 影片容器 (RWD 關鍵) --- */
-.video-item {
-    background: #fff;
-    border-radius: 12px;
+/* Ticker 跑馬燈 */
+.ticker-container {
+    width: 100%;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    transition: transform 0.2s;
+    padding-top: 100px;    
+    padding-bottom: 100px; 
+    margin-bottom: 20px;
+    perspective: 1000px;
+}
+.ticker-wrapper { transform: rotateX(10deg) rotateY(-10deg) rotateZ(5deg) scale(1.1); transform-style: preserve-3d; }
+.ticker-track { display: flex; gap: 20px; width: max-content; animation: scroll 40s linear infinite; }
+.ticker-item img { width: 200px; height: 300px; object-fit: cover; border-radius: 12px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+.hero-text { text-align: center; color: #111; margin-top: 20px; }
+.hero-text h1 { font-size: 3rem; font-weight: 600; margin-bottom: 10px; }
+
+/* Scroll Trigger */
+.scroll-trigger { height: 100vh; width: 100%; pointer-events: none; }
+
+/* Portfolio Section */
+.portfolio-section {
+    position: relative; z-index: 2;
+    padding: 0px 50px 100px 50px;
+    margin-top: -50vh;
+    color: #ffffff; opacity: 0; transition: opacity 0.5s ease;
+    min-height: 100vh;
 }
 
-.video-item:hover {
-    transform: translateY(-5px);
-}
+.section-title { text-align: center; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 50px; opacity: 0.7; }
+.work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px; max-width: 1200px; margin: 0 auto; }
+.work-card { cursor: none; transition: transform 0.3s ease; }
+.work-card:hover { transform: translateY(-10px); }
+.image-wrapper { overflow: hidden; border-radius: 4px; margin-bottom: 20px; aspect-ratio: 4/3; }
+.image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+.work-card:hover img { transform: scale(1.05); }
+.work-info { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; }
 
-.video-wrapper {
+/* style.css */
+
+/* =========================================
+   新增：WebGL 過渡區塊樣式
+   ========================================= */
+#transition-container {
     position: relative;
     width: 100%;
-    /* 這裡設定 16:9 的比例 */
-    aspect-ratio: 16 / 9; 
-    background: #000;
+    /* ▼ 修改 1：將高度從 150vh 減為 120vh，減少空白感，加快轉場 */
+    height: 100vh; 
+    z-index: 3;
+    background-color: #f5f5f5; /* 桌面的底色 */
+    
+    /* ▼ 修改 2：加入格紋背景，並使用 fixed 讓它跟下方的桌面完美對齊 */
+    background-image: linear-gradient(#e0e0e0 1px, transparent 1px), linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-attachment: fixed; /* 關鍵：讓格紋固定在視窗，製造連續感 */
+    
+    margin-top: -1px;
 }
 
-.video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
+#transition-canvas {
+    /* 關鍵：使用 sticky 定位 */
+    position: -webkit-sticky; /* Safari 需要 */
+    position: sticky;
+    top: 0; /* 當容器頂部到達視窗頂部時，畫布開始黏住 */
     width: 100%;
-    height: 100%;
-    border-radius: 12px 12px 0 0;
+    height: 100vh; /* 畫布佔滿整個視窗高度 */
+    display: block;
+    /* 確保畫布在容器內層級最高 */
+    z-index: 10; 
+    /* 讓滑鼠事件穿透，不影響捲動 */
+    pointer-events: none; 
 }
 
-.video-info {
-    padding: 15px;
+/* =========================================
+   Desktop Section (還原為純色背景)
+   ========================================= */
+.desktop-section {
+    position: relative; 
+    z-index: 3;
+    min-height: 10vh;
+    width: 100%; /* ★ 重要：強制寬度 100%，解決變窄問題 */
+    
+/* =========================================
+   Desktop Section (背景同步版)
+   ========================================= */
+.desktop-section {
+    position: relative; 
+    z-index: 3;
+    min-height: 10vh;
+    width: 100%;
+    background-color: #f5f5f5; 
+    overflow: hidden; 
+    padding: 30px;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    margin-top: -1px; 
 }
 
-.video-info h3 {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-    color: #333;
+.desktop-bg-grid {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    
+    /* ▼ 修改 3：確保這裡的格紋設定跟上面一模一樣 */
+    background-image: linear-gradient(#e0e0e0 1px, transparent 1px), linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-attachment: fixed; /* 關鍵：同樣使用 fixed */
+    
+    pointer-events: none; 
+    z-index: 0;
+    opacity: 1;
+}
+/* ... 其他 CSS 保持不變 ... */
+.desktop-title {
+    position: relative; z-index: 1; font-size: 1.5rem; color: #333; font-weight: 600;
+    margin-bottom: 40px; background: #f5f5f5; padding: 10px 20px;
+    border: 1px solid #ccc; border-radius: 50px;
+}
+.folders-container { position: relative; width: 100%; height: 80vh; z-index: 1; }
+
+/* Folders */
+.folder { width: 100px; text-align: center; cursor: none; transition: transform 0.2s; position: absolute; }
+.folder:hover { transform: scale(1.1) !important; z-index: 10; }
+.folder-icon { width: 60px; height: 60px; margin: 0 auto 5px; }
+.folder-icon svg { width: 100%; height: 100%; drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.folder-name { font-size: 12px; color: #333; background: rgba(255,255,255,0.8); padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+
+/* Modal (詳情頁) */
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #050505; z-index: 100; overflow-y: auto;
+    opacity: 0; visibility: hidden; transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.modal.active { opacity: 1; visibility: visible; transform: translateY(0); }
+.close-btn {
+    position: fixed; top: 30px; right: 30px;
+    background: white; color: black; border: none;
+    padding: 10px 20px; border-radius: 30px; font-weight: bold;
+    cursor: none; z-index: 101; mix-blend-mode: difference;
+}
+.modal-content { max-width: 900px; margin: 100px auto; padding: 0 20px; color: white; }
+.modal-header { margin-bottom: 60px; text-align: center; }
+.modal-category { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 15px; }
+.modal-title { font-size: 3rem; margin-bottom: 20px; }
+.modal-desc { font-size: 1.1rem; color: #ccc; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+.modal-gallery { display: flex; flex-direction: column; gap: 40px; }
+.modal-gallery img { width: 100%; height: auto; border-radius: 8px; }
+
+/* 自訂游標 */
+#custom-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 12px; height: 12px;
+    background-color: #FF4500;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999 !important;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.2s;
+    mix-blend-mode: difference;
+}
+body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
+
+/* Spotify Widget */
+.spotify-widget {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    width: 300px;
+    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    background: #000;
+    cursor: auto !important; /* 在 Widget 內恢復系統滑鼠，方便操作 */
+}
+.spotify-widget iframe { pointer-events: auto; }
+
+/* =========================================
+   Dock 工具列樣式
+   ========================================= */
+.custom-dock-container {
+    position: absolute; 
+    bottom: 50px; 
+    left: 50%;
+    transform: translateX(-50%);
+    
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    padding: 12px 25px;
+    border-radius: 24px;
+    display: flex;
+    gap: 30px;
+    z-index: 10;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.5);
 }
 
-.video-info p {
-    margin: 0;
+.custom-dock-item {
+    position: relative;
+    cursor: none; /* 使用自訂游標 */
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.custom-dock-item:hover { transform: translateY(-10px) scale(1.1); }
+
+.custom-app-icon {
+    width: 60px; height: 60px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* 顏色漸層 */
+.video-icon { background: linear-gradient(135deg, #662D8C 0%, #ED1E79 100%); }
+.contact-icon { background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); }
+
+/* Tooltip */
+.custom-tooltip {
+    position: absolute;
+    top: -45px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
     font-size: 13px;
-    color: #888;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, top 0.2s;
+    white-space: nowrap; font-weight: 500;
+}
+.custom-dock-item:hover .custom-tooltip { opacity: 1; top: -55px; }
+
+/* =========================================
+   聯絡我彈跳視窗 (Popup Overlay)
+   ========================================= */
+.contact-overlay {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    width: 400px;
+    max-height: 85vh;
+    
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    z-index: 10000;
+    
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    opacity: 1; pointer-events: auto;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* 在彈窗內恢復系統游標，方便點擊 */
+    cursor: auto !important; 
 }
 
-/* 手機版改成一排 1 個 */
+.contact-overlay.hidden {
+    opacity: 0; pointer-events: none;
+    transform: translate(-50%, -45%) scale(0.95);
+}
+
+.overlay-body { padding: 30px; position: relative; }
+
+/* 關閉按鈕 */
+.close-btn-overlay {
+    position: absolute; top: 15px; right: 15px;
+    background: #f0f0f0; border: none;
+    width: 30px; height: 30px; border-radius: 50%;
+    cursor: pointer !important;
+    font-size: 14px; color: #333;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+}
+.close-btn-overlay:hover { background: #e0e0e0; }
+
+/* 聯絡人資訊 */
+.contact-card-header { text-align: center; margin-bottom: 20px; }
+.contact-avatar-large {
+    width: 80px; height: 80px;
+    border-radius: 50%; object-fit: cover;
+    margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.contact-name { font-size: 1.5rem; color: #333; margin-bottom: 5px; }
+.contact-job { font-size: 0.9rem; color: #666; margin-bottom: 25px; }
+
+.contact-actions { display: flex; gap: 20px; justify-content: center; margin-bottom: 30px; }
+.action-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    text-decoration: none; color: #333; font-size: 12px;
+    transition: transform 0.2s; cursor: pointer !important;
+}
+.action-btn:hover { transform: translateY(-3px); color: #000; }
+.action-icon {
+    width: 50px; height: 50px;
+    background: #f5f5f5; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; transition: background 0.2s;
+}
+.action-btn:hover .action-icon { background: #e8e8e8; }
+
+.contact-info-list { text-align: left; padding: 0 10px; }
+.info-group { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+.info-group:last-child { border-bottom: none; }
+.info-label { font-size: 10px; text-transform: uppercase; color: #999; letter-spacing: 1px; margin-bottom: 5px; }
+.info-value, .info-value a { font-size: 14px; color: #333; text-decoration: none; line-height: 1.5; cursor: pointer !important; }
+.social-link { display: inline-flex; align-items: center; gap: 8px; color: #333; text-decoration: none; font-weight: 500; cursor: pointer !important; }
+
+/* RWD */
 @media (max-width: 768px) {
-    .video-grid {
-        grid-template-columns: 1fr; /* 一排一個 */
-        gap: 20px;
+    /* 資料夾改為網格排列 */
+    .folders-container { 
+        height: auto; 
+        display: grid; 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 20px; 
+        padding-bottom: 20px; /* 減少底部內距，因為下面還有東西 */
     }
+    
+    /* 資料夾解除絕對定位，乖乖排列 */
+    .folder { 
+        position: relative !important; 
+        left: auto !important; 
+        top: auto !important; 
+        transform: none !important; 
+        width: auto; 
+    }
+    
+    /* 文字與排版調整 */
+    .hero-text h1 { font-size: 2rem; }
+    .work-grid { grid-template-columns: 1fr; }
+    .contact-overlay { width: 90%; }
+    
+    /* --- 修正重點 1：Spotify --- */
+    /* 保持相對定位，佔滿寬度 */
+    .spotify-widget { 
+        position: relative; 
+        bottom: auto; 
+        right: auto; 
+        width: 100%; 
+        margin-top: 40px; 
+        margin-bottom: 30px; /* 增加與下方 Icon 的距離 */
+    }
+    
+    /* --- 修正重點 2：Dock (Icon區) --- */
+    /* 關鍵：改為相對定位 (relative)，取消固定位置 */
+    /* 這樣它就會自動排在 Spotify 的正下方，不會重疊 */
+    .custom-dock-container { 
+        position: relative;     /* 不再是 absolute */
+        bottom: auto;           /* 清除底部距離 */
+        left: auto;             /* 清除左邊距離 */
+        transform: none;        /* 清除置中位移 */
+        
+        width: 100%;            /* 寬度佔滿容器 */
+        justify-content: center; 
+        margin-bottom: 50px;    /* 底部留白 */
+    }
+    
+    /* 手機上恢復預設滑鼠 */
+    body, a, button, .folder, .work-card { cursor: auto !important; }
+    #custom-cursor { display: none; }
 }
