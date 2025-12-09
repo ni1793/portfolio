@@ -373,7 +373,8 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
 .info-value, .info-value a { font-size: 14px; color: #333; text-decoration: none; line-height: 1.5; cursor: pointer !important; }
 .social-link { display: inline-flex; align-items: center; gap: 8px; color: #333; text-decoration: none; font-weight: 500; cursor: pointer !important; }
 
-/* RWD */
+/* style.css - RWD 部分 (更新版) */
+
 @media (max-width: 768px) {
     /* 資料夾改為網格排列 */
     .folders-container { 
@@ -381,10 +382,10 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
         display: grid; 
         grid-template-columns: repeat(3, 1fr); 
         gap: 20px; 
-        padding-bottom: 20px; /* 減少底部內距，因為下面還有東西 */
+        padding-bottom: 20px; 
     }
     
-    /* 資料夾解除絕對定位，乖乖排列 */
+    /* 資料夾解除絕對定位 */
     .folder { 
         position: relative !important; 
         left: auto !important; 
@@ -393,37 +394,41 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
         width: auto; 
     }
     
-    /* 文字與排版調整 */
     .hero-text h1 { font-size: 2rem; }
+    
+    /* 作品網格改為單欄 */
     .work-grid { grid-template-columns: 1fr; }
+
+    /* ▼▼▼ 新增：作品區只保留主標 ▼▼▼ */
+    .work-info span:last-child {
+        display: none; /* 隱藏後面的類別 (Category) */
+    }
+    .work-info {
+        justify-content: center; /* 讓剩下的標題置中 */
+    }
+    /* ▲▲▲ 新增結束 ▲▲▲ */
+    
     .contact-overlay { width: 90%; }
     
-    /* --- 修正重點 1：Spotify --- */
-    /* 保持相對定位，佔滿寬度 */
+    /* Spotify 調整 */
     .spotify-widget { 
         position: relative; 
         bottom: auto; 
         right: auto; 
         width: 100%; 
         margin-top: 40px; 
-        margin-bottom: 30px; /* 增加與下方 Icon 的距離 */
+        margin-bottom: 30px; 
     }
     
-    /* --- 修正重點 2：Dock (Icon區) --- */
-    /* 關鍵：改為相對定位 (relative)，取消固定位置 */
-    /* 這樣它就會自動排在 Spotify 的正下方，不會重疊 */
+    /* Dock 調整 */
     .custom-dock-container { 
-        position: relative;     /* 不再是 absolute */
-        bottom: auto;           /* 清除底部距離 */
-        left: auto;             /* 清除左邊距離 */
-        transform: none;        /* 清除置中位移 */
-        
-        width: 100%;            /* 寬度佔滿容器 */
-        justify-content: center; 
-        margin-bottom: 50px;    /* 底部留白 */
+        position: relative;
+        bottom: auto; left: auto; transform: none;
+        width: 100%; justify-content: center; 
+        margin-bottom: 50px;
     }
     
-    /* 手機上恢復預設滑鼠 */
+    /* 恢復預設滑鼠 */
     body, a, button, .folder, .work-card { cursor: auto !important; }
     #custom-cursor { display: none; }
 }
