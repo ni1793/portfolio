@@ -79,7 +79,7 @@ transition: opacity 0.5s;
     
     /* 設定高度，填滿剩下的空間 */
     flex-grow: 1; 
-    min-height: 400px; /* 確保文字區有最小高度 */
+    min-height: 500px; /* 確保文字區有最小高度 */
     
     z-index: 2;
     display: flex;
@@ -101,16 +101,18 @@ transition: opacity 0.5s;
     font-size: 8rem; 
     color: #91989F;
     font-style: italic;
-    top: 20%; /* 靠齊內容區頂部 */
-    left: 20%;
+    top: 25%; /* 靠齊內容區頂部 */
+    left: 10%;
+    Bottom: 20%;
+
 }
 
 .title-possibilities {
     font-size: 8rem;
     color: #B1B479;
     font-style: italic;
-    bottom: 20%; /* 靠齊內容區底部 */
-    right: 20%;
+    bottom: 25%; /* 靠齊內容區底部 */
+    right: 10%;
 }
 
 /* 文字說明 */
@@ -162,8 +164,8 @@ transition: opacity 0.5s;
     
     /* Designing: 放在上方偏左 */
     .title-designing {
-        font-size: 17vw; /* 稍微放大一點 */
-        top: 10%;        
+        font-size: 15vw;
+        top: 5%;        
         left: 5%;        
         text-align: left;
         transform: none;
@@ -171,8 +173,8 @@ transition: opacity 0.5s;
     
     /* Possibilities: 放在 Designing 下方偏右 */
     .title-possibilities {
-        font-size: 17vw; 
-        top: 28%;        /* 讓它稍微壓在 Designing 下面一點點 */
+        font-size: 15vw; 
+        top: 20%;        /* 讓它稍微壓在 Designing 下面一點點 */
         right: 5%;       
         left: auto;      
         text-align: right;
@@ -199,7 +201,7 @@ transition: opacity 0.5s;
     
     /* 右側文字：放在最底部 */
     .desc-right { 
-        bottom: 35%; /* 最下面 */
+        bottom: 53%; /* 最下面 */
         right: 8%; 
         text-align: right; 
     }
