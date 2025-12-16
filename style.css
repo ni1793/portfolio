@@ -138,26 +138,15 @@ white-space: nowrap; /* 確保 "in Taiwan" 不會掉到下一行 */
     pointer-events: none; 
 }
 
-/* =========================================
-   Desktop Section (還原為純色背景)
-   ========================================= */
 .desktop-section {
     position: relative; 
     z-index: 3;
-    min-height: 10vh;
-    width: 100%; /* ★ 重要：強制寬度 100%，解決變窄問題 */
+    min-height: 100vh; /* 修正為 100vh，確保高度足夠 */
+    width: 100%;       /* 強制寬度 100% */
     
-/* =========================================
-   Desktop Section (背景同步版)
-   ========================================= */
-.desktop-section {
-    position: relative; 
-    z-index: 3;
-    min-height: 10vh;
-    width: 100%;
     background-color: #f5f5f5; 
     overflow: hidden; 
-    padding: 30px;
+    padding: 50px;
     display: flex; 
     flex-direction: column; 
     align-items: center;
