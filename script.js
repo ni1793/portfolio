@@ -349,12 +349,15 @@ if (spotifyWidget) {
     });
 }
 
+// script.js
+
 // ===============================================
-// 7. 左上角即時時鐘
+// 7. 左上角即時時鐘 (修改版) & 互動彩蛋
 // ===============================================
 
 function updateClock() {
-    const timeDisplay = document.getElementById('current-time');
+    // 修改目標：只抓取數字部分的 span
+    const timeDisplay = document.getElementById('time-part');
     if (!timeDisplay) return;
 
     const now = new Date();
@@ -363,20 +366,41 @@ function updateClock() {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
-    // 格式：HH:MM:SS in Taiwan
-    const timeString = `${hours}:${minutes}:${seconds} in Taiwan`;
-
-    timeDisplay.textContent = timeString;
+    // 只更新時間數字，保留後面的 span 結構
+    timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
 
     requestAnimationFrame(updateClock);
 }
 
 // 啟動時鐘
 updateClock();
-// script.js - 貼在檔案最尾端
 
-// script.js - 請貼在檔案最下面
-
+// --- 新增：點擊 "in" 的互動函式 ---
+function toggleMagic(element) {
+    // 檢查是否已經變成 NI 了
+    if (element.classList.contains('is-active')) {
+        // 第 2 階段：已經是 NI 了，點擊打開聯絡視窗
+        toggleContactOverlay(true);
+    } else {
+        // 第 1 階段：還是 in，執行變身動畫
+        
+        // 1. 先旋轉一半 (90度)
+        element.style.transform = "rotateY(90deg)";
+        
+        // 2. 在旋轉到看不見時，偷換文字
+        setTimeout(() => {
+            element.textContent = "NI"; // 改成 NI
+            element.classList.add('is-active'); //這會觸發 CSS 的變色與最終旋轉
+            
+            // 因為 CSS 設定 rotateY(180deg)，這裡文字會是反的
+            // 所以我們不需要在這裡手動設回 0deg，而是利用 180deg 剛好翻轉的效果
+            // 但因為文字鏡像了，我們可以用 scaleX(-1) 修正，或者直接用 rotate(360)
+            // 為了簡單，我們讓它轉一圈變正：
+            element.style.transform = "rotateY(360deg) scale(1.2)";
+            
+        }, 150); // 等待 CSS transition 一半的時間
+    }
+}
 // ===============================================
 // 8. 第二個 WebGL 渲染器：區塊間的過渡特效 (橘色黏液版)
 // ===============================================

@@ -16,24 +16,48 @@
 
     <div id="canvas-container"></div>
 
-    <section class="hero-section">
-        <nav class="navbar">
-            <div class="nav-left" id="current-time">00:00:00</div>
-            <div class="nav-right contact-trigger" onclick="toggleContactOverlay(true)">
-                NI
-            </div>
-        </nav>
+<section class="hero-section new-hero-layout">
+    <div class="hero-grid-bg"></div>
+
+<nav class="navbar">
+    <div class="nav-left">
+        <span id="time-part">00:00:00</span>
         
-        <div class="ticker-container">
-            <div class="ticker-wrapper">
-                <div class="ticker-track" id="ticker-track"></div>
-            </div>
+        <span id="magic-word" onclick="toggleMagic(this)">in</span>
+        
+        Taiwan
+    </div>
+    
+    <div class="nav-right contact-trigger" onclick="toggleContactOverlay(true)">
+        NI
+    </div>
+</nav>
+
+    <div class="ticker-container">
+        <div class="ticker-wrapper">
+            <div class="ticker-track" id="ticker-track"></div>
         </div>
-        <div class="hero-text">
-            <h1>HEY, I'M NI</h1>
-            <p>Graphic Designer</p>
+    </div>
+
+    <div class="hero-content">
+        
+        <h1 class="title-designing">Rationality</h1>
+        <h1 class="title-possibilities">Intuition</h1>
+
+        <div class="desc-text desc-left">
+            <p>Let’s Build<br> Something Beautiful<br> Together.</p>
         </div>
-    </section>
+
+<div class="desc-text desc-right">
+    <p>Hi, I'm <span class="contact-trigger" style="font-weight:600" onclick="toggleContactOverlay(true)">NI</span>,<br> 
+    a Graphic Designer<br>
+    based 
+    <span class="magic-text" onclick="toggleMagic(this)">in</span> 
+    Taiwan.</p>
+</div>
+
+    </div>
+</section>
 
     <div class="scroll-trigger" style="height: 50vh;"></div>
 

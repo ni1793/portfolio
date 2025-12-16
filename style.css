@@ -20,26 +20,234 @@ a, button, .folder, .work-card, .custom-dock-item {
     z-index: 0; pointer-events: none;
 }
 
-/* Hero Section */
-.hero-section {
-    position: relative; z-index: 1; height: 100vh;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    transition: opacity 0.5s;
+/* style.css - 整合跑馬燈與雜誌排版 */
+
+/* 引入字體 */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* Hero Section 容器調整 */
+.new-hero-layout {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh; /* 確保至少有螢幕高 */
+    width: 100%;
+background-color: transparent;
+    
+    /* 關鍵：垂直排列 (由上而下：跑馬燈 -> 大標題) */
+    display: flex;
+    flex-direction: column; 
+    justify-content: flex-start; /* 從頂部開始排 */
+    align-items: center;
+    
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    padding-top: 80px;
+transition: opacity 0.5s;
+ /* 避開頂部 Navbar */
 }
 
-.navbar {
-    position: absolute; top: 0; width: 100%; padding: 30px 50px;
-    display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; color: #111;
+/* 背景網格 */
+.hero-grid-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-size: 100px 100px;
+    z-index: 0; pointer-events: none;
 }
 
-/* 1. 針對時間顯示的優化 */
-#current-time {
-    font-family: 'Inter', monospace; /* 確保數字風格 */
-    font-variant-numeric: tabular-nums; /* 關鍵：讓數字等寬，秒數跳動時不會左右晃動 */
-min-width: auto;
-white-space: nowrap; /* 確保 "in Taiwan" 不會掉到下一行 */
+/* --- 1. 跑馬燈調整 (縮小留白以節省空間) --- */
+.ticker-container {
+    width: 100%;
+    overflow: hidden;
+    
+    /* ▼▼▼ 調整這裡：減少原本的 100px 留白 ▼▼▼ */
+    padding-top: 20px;    
+    padding-bottom: 40px; 
+    
+    margin-bottom: 0;
+    perspective: 1000px;
+    z-index: 2;
+    flex-shrink: 0; /* 防止跑馬燈被擠壓 */
 }
 
+/* --- 2. 下方雜誌內容區域 --- */
+.hero-content {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    
+    /* 設定高度，填滿剩下的空間 */
+    flex-grow: 1; 
+    min-height: 400px; /* 確保文字區有最小高度 */
+    
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 大標題樣式 (稍微縮小一點以免太擁擠) */
+.title-designing, .title-possibilities {
+    font-family: 'Playfair Display', serif;
+    position: absolute;
+    line-height: 1;
+    margin: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.title-designing {
+    font-size: 8rem; 
+    color: #91989F;
+    font-style: italic;
+    top: 20%; /* 靠齊內容區頂部 */
+    left: 20%;
+}
+
+.title-possibilities {
+    font-size: 8rem;
+    color: #B1B479;
+    font-style: italic;
+    bottom: 20%; /* 靠齊內容區底部 */
+    right: 20%;
+}
+
+/* 文字說明 */
+.desc-text {
+    position: absolute;
+    font-size: 0.7rem;
+    color: #434343;
+    line-height: 1.5;
+    z-index: 3;
+}
+.desc-left { top: 60%; left: 15%; }
+.desc-right { top: 30%; right: 13%; text-align: right; }
+
+
+/* style.css - RWD 手機版調整 (最終版：標題在上，小字在下) */
+
+@media (max-width: 768px) {
+    /* 1. 整體高度設定 */
+    .new-hero-layout { 
+        padding-top: 80px; 
+        Padding-bottom: 80px; 
+
+        height: 100vh; /* 佔滿畫面 */
+        justify-content: center;
+    }
+    
+    .ticker-container { 
+        padding-top: 0; 
+        padding-bottom: 0px; 
+        flex-shrink: 0; 
+    }
+    
+    .hero-content { 
+        width: 100%;
+        /* 增加高度，讓標題跟下方小字有足夠空間分開 */
+        height: 65vh; 
+        position: relative;
+        margin-bottom: 50;
+    }
+    
+    /* 2. 大標題：保持雜誌風格，使用 vw 自動縮放 */
+    .title-designing, .title-possibilities {
+        position: absolute;
+        line-height: 1;
+        width: auto;
+        display: block;
+        margin: 0;
+    }
+    
+    /* Designing: 放在上方偏左 */
+    .title-designing {
+        font-size: 17vw; /* 稍微放大一點 */
+        top: 10%;        
+        left: 5%;        
+        text-align: left;
+        transform: none;
+    }
+    
+    /* Possibilities: 放在 Designing 下方偏右 */
+    .title-possibilities {
+        font-size: 17vw; 
+        top: 28%;        /* 讓它稍微壓在 Designing 下面一點點 */
+        right: 5%;       
+        left: auto;      
+        text-align: right;
+        transform: none;
+    }
+    
+    /* 3. 小字說明：統一移動到畫面下方 */
+    .desc-text { 
+        position: absolute;
+        font-size: 0.8rem; /* 字體大小 */
+        line-height: 1.5;
+        width: 85%; /* 限制寬度，避免太貼邊 */
+        margin:10;
+        /* 清除電腦版的定位 */
+        top: auto; 
+    }
+    
+    /* 左側文字：放在倒數第二個位置 */
+    .desc-left { 
+        bottom: 95%; /* 距離底部的位置 */
+        left: 8%; 
+        text-align: left;
+    }
+    
+    /* 右側文字：放在最底部 */
+    .desc-right { 
+        bottom: 35%; /* 最下面 */
+        right: 8%; 
+        text-align: right; 
+    }
+    
+    /* 裝飾物件隱藏 */
+    .hero-obj { display: none; } 
+    
+    /* --- 其他 RWD 設定 (保持不變) --- */
+    .folders-container { height: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-bottom: 20px; }
+    .folder { position: relative !important; left: auto !important; top: auto !important; transform: none !important; width: auto; }
+    .work-grid { grid-template-columns: 1fr; }
+    .work-info span:last-child { display: none; }
+    .work-info { justify-content: center; }
+    .contact-overlay { width: 90%; }
+    .spotify-widget { position: relative; bottom: auto; right: auto; width: 100%; margin-top: 40px; margin-bottom: 30px; }
+    .custom-dock-container { position: relative; bottom: auto; left: auto; transform: none; width: 100%; justify-content: center; margin-bottom: 50px; }
+    body, a, button, .folder, .work-card { cursor: auto !important; }
+    #custom-cursor { display: none; }
+}
+/* style.css */
+
+/* 1. 時間數字樣式 (繼承原本的設定) */
+#time-part {
+    font-family: 'Inter', monospace;
+    font-variant-numeric: tabular-nums; /* 數字等寬，不跳動 */
+    font-weight: 500;
+}
+
+/* style.css - 修改互動文字樣式 (支援導覽列與大標題內文) */
+
+/* 互動文字 "in" 的樣式 (支援 ID 和 Class) */
+#magic-word, .magic-text {
+    display: inline-block;       /* 讓它能夠旋轉 */
+    cursor: pointer;             /* 滑鼠變成手指 */
+    margin: 0 3px;               /* 左右留點空隙，內文不需要太寬，改為 3px */
+    font-weight: 500;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
+    user-select: none;           /* 防止點擊時反白選取 */
+    position: relative;
+    vertical-align: middle;      /* 確保在文字行內垂直對齊 */
+}
+
+/* 當變成 NI 之後的狀態 */
+#magic-word.is-active, .magic-text.is-active {
+    color: #B1B479;              /* 變成指定的顏色 */
+    font-weight: 700;            /* 變粗 */
+    transform: rotateY(180deg) scale(1.2); /* 翻轉並放大一點 */
+}
 /* 2. 針對右上角 NI 按鈕的優化 */
 .contact-trigger {
     cursor: pointer !important; /* 強制顯示點擊手勢 (即使有用自訂游標) */
@@ -62,7 +270,7 @@ white-space: nowrap; /* 確保 "in Taiwan" 不會掉到下一行 */
     justify-content: space-between; 
     font-size: 14px; /* 這就是您說的 "跟 in Taiwan 一樣大小" */
     font-weight: 500; 
-    color: #111;
+    color: #434343;
     z-index: 10; /* 確保在最上層 */
 }
 /* Ticker 跑馬燈 */
@@ -167,7 +375,7 @@ white-space: nowrap; /* 確保 "in Taiwan" 不會掉到下一行 */
 }
 /* ... 其他 CSS 保持不變 ... */
 .desktop-title {
-    position: relative; z-index: 1; font-size: 1.5rem; color: #333; font-weight: 600;
+    position: relative; z-index: 1; font-size: 1.5rem; color: #434343; font-weight: 600;
     margin-bottom: 40px; background: #f5f5f5; padding: 10px 20px;
     border: 1px solid #ccc; border-radius: 50px;
 }
@@ -178,7 +386,7 @@ white-space: nowrap; /* 確保 "in Taiwan" 不會掉到下一行 */
 .folder:hover { transform: scale(1.1) !important; z-index: 10; }
 .folder-icon { width: 60px; height: 60px; margin: 0 auto 5px; }
 .folder-icon svg { width: 100%; height: 100%; drop-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-.folder-name { font-size: 12px; color: #333; background: rgba(255,255,255,0.8); padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+.folder-name { font-size: 12px; color: #434343; background: rgba(255,255,255,0.8); padding: 2px 6px; border-radius: 4px; font-weight: 500; }
 
 /* Modal (詳情頁) */
 .modal {
@@ -207,7 +415,7 @@ white-space: nowrap; /* 確保 "in Taiwan" 不會掉到下一行 */
     position: fixed;
     top: 0; left: 0;
     width: 12px; height: 12px;
-    background-color: #FF4500;
+    background-color: #B1B479;
     border-radius: 50%;
     pointer-events: none;
     z-index: 999999 !important;
@@ -226,7 +434,7 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
     z-index: 10;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     border-radius: 12px;
-    background: #000;
+    background: #434343;
     cursor: auto !important; /* 在 Widget 內恢復系統滑鼠，方便操作 */
 }
 .spotify-widget iframe { pointer-events: auto; }
@@ -267,8 +475,8 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
 }
 
 /* 顏色漸層 */
-.video-icon { background: linear-gradient(135deg, #662D8C 0%, #ED1E79 100%); }
-.contact-icon { background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); }
+.video-icon { background: linear-gradient(135deg, #434343 0%, #91989F 100%); }
+.contact-icon { background: linear-gradient(135deg, #B1B479 0%, #90B44B 100%); }
 
 /* Tooltip */
 .custom-tooltip {
@@ -324,7 +532,7 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
     background: #f0f0f0; border: none;
     width: 30px; height: 30px; border-radius: 50%;
     cursor: pointer !important;
-    font-size: 14px; color: #333;
+    font-size: 14px; color: #434343;
     display: flex; align-items: center; justify-content: center;
     transition: background 0.2s;
 }
@@ -337,13 +545,13 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
     border-radius: 50%; object-fit: cover;
     margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
-.contact-name { font-size: 1.5rem; color: #333; margin-bottom: 5px; }
-.contact-job { font-size: 0.9rem; color: #666; margin-bottom: 25px; }
+.contact-name { font-size: 1.5rem; color: #434343; margin-bottom: 5px; }
+.contact-job { font-size: 0.9rem; color: #434343; margin-bottom: 25px; }
 
 .contact-actions { display: flex; gap: 20px; justify-content: center; margin-bottom: 30px; }
 .action-btn {
     display: flex; flex-direction: column; align-items: center; gap: 8px;
-    text-decoration: none; color: #333; font-size: 12px;
+    text-decoration: none; color: #434343; font-size: 12px;
     transition: transform 0.2s; cursor: pointer !important;
 }
 .action-btn:hover { transform: translateY(-3px); color: #000; }
@@ -359,8 +567,8 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
 .info-group { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
 .info-group:last-child { border-bottom: none; }
 .info-label { font-size: 10px; text-transform: uppercase; color: #999; letter-spacing: 1px; margin-bottom: 5px; }
-.info-value, .info-value a { font-size: 14px; color: #333; text-decoration: none; line-height: 1.5; cursor: pointer !important; }
-.social-link { display: inline-flex; align-items: center; gap: 8px; color: #333; text-decoration: none; font-weight: 500; cursor: pointer !important; }
+.info-value, .info-value a { font-size: 14px; color: #434343; text-decoration: none; line-height: 1.5; cursor: pointer !important; }
+.social-link { display: inline-flex; align-items: center; gap: 8px; color: #434343; text-decoration: none; font-weight: 500; cursor: pointer !important; }
 
 /* style.css - RWD 部分 (更新版) */
 
