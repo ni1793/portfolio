@@ -235,11 +235,10 @@ transition: opacity 0.5s;
     display: inline-block;       /* 讓它能夠旋轉 */
     cursor: pointer;             /* 滑鼠變成手指 */
     margin: 0 3px;               /* 左右留點空隙，內文不需要太寬，改為 3px */
-    font-weight: 500;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
     user-select: none;           /* 防止點擊時反白選取 */
     position: relative;
-    vertical-align: middle;      /* 確保在文字行內垂直對齊 */
+    vertical-align: baseline;      /* 確保在文字行內垂直對齊 */
 }
 
 /* 當變成 NI 之後的狀態 */
