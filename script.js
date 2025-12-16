@@ -4,29 +4,45 @@
 
 const projects = [
     { 
-        id: 1, title: "視界的距離", category: "展覽主視覺設計",  
-        cover: "images/project1/01.jpg", description: "The Distance Anywhere", 
-        images: ["images/project1/01.jpg", "images/project1/02.jpg", "images/project1/03.jpg","images/project1/04.jpg", "images/project1/05.jpg" ] 
+        id: 1, title: "是你嘗試著踢球,還是球引領著你到某方?", category: "展覽主視覺設計", 
+        cover: "images/project1/01.jpg", description: "楊祐丞個展", 
+        images: ["images/project1/01.jpg", "images/project1/02.jpg", "images/project1/03.jpg"] 
     },
     { 
-        id: 2, title: "擁有一具纖薄的身體", category: "展覽主視覺設計", 
-        cover: "images/project2/01.jpg", description: "Possessing a Vulnerable Body", 
-        images: ["images/project2/01.jpg", "images/project2/02.jpg", "images/project2/03.jpg", "images/project2/04.jpg", "images/project2/05.jpg", "images/project2/06.jpg"] 
+        id: 2, title: "∞One", category: "展覽主視覺設計", 
+        cover: "images/project2/01.jpg", description: "廖琳俐個展", 
+        images: ["images/project2/01.jpg", "images/project2/02.jpg"] 
     },
     { 
-        id: 3, title: "繼續播放", category: "展覽網頁宣傳", 
-        cover: "images/project3/01.jpg", description: "Continuation of Play", 
+        id: 3, title: "平衡的輪廓", category: "展覽主視覺設計", 
+        cover: "images/project3/01.jpg", description: "李芷筠、張舫少芹雙個展", 
         images: ["images/project3/01.jpg", "images/project3/02.jpg", "images/project3/03.jpg", "images/project3/04.jpg"] 
     },
     { 
-        id: 4, title: "平衡的輪廓", category: "展覽主視覺設計", 
-        cover: "images/project4/01.jpg", description: "Harmonic Silhouette", 
-        images: ["images/project4/01.jpg", "images/project4/02.jpg", "images/project4/03.jpg", "images/project4/04.jpg"] 
+        id: 4, title: "水耀日", category: "展覽主視覺設計", 
+        cover: "images/project4/01.jpg", description: "廖琳俐個展", 
+        images: ["images/project4/01.jpg", "images/project4/02.jpg", "images/project4/03.jpg"] 
     },
     { 
-        id: 5, title: "插畫 Illustration", category: "插畫作品", 
-        cover: "images/project5/01.jpg", description: "Personal Collection", 
-        images: ["images/project5/01.jpg", "images/project5/02.jpg", "images/project5/03.jpg", "images/project5/04.jpg", "images/project5/05.jpg", "images/project5/06.jpg", "images/project5/07.jpg", "images/project5/08.jpg"] 
+        id: 5, title: "繼續播放", category: "展覽網頁宣傳", 
+        cover: "images/project5/01.jpg", description: "張舫少芹個展", 
+        images: ["images/project5/01.jpg", "images/project5/02.jpg", "images/project5/03.jpg", "images/project5/04.jpg"] 
+    },
+
+    { 
+        id: 6, title: "擁有一具纖薄的身體", category: "展覽主視覺設計", 
+        cover: "images/project6/01.jpg", description: "彭思錡個展", 
+        images: ["images/project6/01.jpg", "images/project6/02.jpg", "images/project6/03.jpg", "images/project6/04.jpg", "images/project6/05.jpg", "images/project6/06.jpg"] 
+    },
+    { 
+        id: 7, title: "視界的距離", category: "展覽主視覺設計",  
+        cover: "images/project7/01.jpg", description: "張舫少芹個展", 
+        images: ["images/project7/01.jpg", "images/project7/02.jpg", "images/project7/03.jpg","images/project7/04.jpg", "images/project7/05.jpg" ] 
+    },
+    { 
+        id: 8, title: "插畫 Illustration", category: "插畫作品", 
+        cover: "images/project8/01.jpg", description: "Personal Collection", 
+        images: ["images/project8/01.jpg", "images/project8/02.jpg", "images/project8/03.jpg", "images/project8/04.jpg", "images/project8/05.jpg", "images/project8/06.jpg", "images/project8/07.jpg", "images/project8/08.jpg"] 
     }
 ];
 
