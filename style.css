@@ -689,7 +689,7 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
 
 .scroll-hint {
     position: absolute;
-    bottom: 30px;
+    bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
