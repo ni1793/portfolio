@@ -305,7 +305,7 @@ transition: opacity 0.5s;
 
 .section-title { text-align: center; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 50px; opacity: 0.7; }
 .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px; max-width: 1200px; margin: 0 auto; }
-.work-card { cursor: none; transition: transform 0.3s ease; }
+.work-card { cursor: none; transition: transform 0.3s ease; will-change: transform;}
 .work-card:hover { transform: translateY(-10px); }
 .image-wrapper { overflow: hidden; border-radius: 4px; margin-bottom: 20px; aspect-ratio: 4/3; }
 .image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
@@ -722,4 +722,175 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
 @keyframes floatDown {
     0%, 100% { transform: translateX(-50%) translateY(0); }
     50% { transform: translateX(-50%) translateY(6px); }
+}
+/* style.css - iOS 風格桌面小工具 */
+
+/* 小工具通用設定 */
+.desktop-widget {
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    z-index: 5;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default !important; /* 小工具用預設滑鼠 */
+    /* 讓它像資料夾一樣隨機散落 */
+}
+
+.desktop-widget:hover {
+    transform: scale(1.05) rotate(0deg) !important; /* Hover 時稍微放大且轉正 */
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    z-index: 10;
+}
+
+/* === 1. 時鐘小工具 === */
+.widget-clock {
+    background: #ffffff;
+    color: #333;
+}
+.clock-face {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+/* 指針中心點 */
+.clock-face::after {
+    content: '';
+    position: absolute;
+    top: 55%; left: 50%;
+    width: 8px; height: 8px;
+    background: #333;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+/* 指針樣式 */
+.hand {
+    position: absolute;
+    bottom: 45%;
+    left: 50%;
+    transform-origin: bottom center;
+    background: #333;
+    border-radius: 4px;
+    transform: translateX(-50%) rotate(0deg); /* 預設角度 */
+}
+.hand.hour { width: 4px; height: 35px; background: #000; }
+.hand.minute { width: 3px; height: 50px; background: #555; }
+.hand.second { width: 2px; height: 55px; background: #ff3b30; transform-origin: bottom center; }
+
+/* 刻度 */
+.clock-mark {
+    position: absolute;
+    width: 2px; height: 5px;
+    background: #ccc;
+    left: 50%; top: 0px;
+    transform-origin: 50% 64px; /* 繞著中心轉 */
+}
+
+/* === 2. 行事曆小工具 === */
+.widget-calendar {
+    background: #ffffff;
+    text-align: center;
+    justify-content: flex-start; /* 內容靠上 */
+    padding: 0;
+}
+.cal-header {
+    width: 100%;
+    height: 25%;
+    background: #ff3b30; /* iOS 紅色 */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.cal-body {
+    height: 75%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 52px;
+    font-weight: 300;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* === 3. 備忘錄小工具 === */
+.widget-note {
+    background: #fffbe0; /* 備忘錄黃 */
+    align-items: flex-start;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.note-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #d4a017;
+    margin-bottom: 8px;
+    width: 100%;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding-bottom: 5px;
+}
+.note-list {
+    list-style: none;
+    padding: 0; margin: 0;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.6;
+    width: 100%;
+}
+.note-list li {
+    position: relative;
+    padding-left: 10px;
+}
+.note-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0; color: #d4a017;
+}
+
+/* 手機版調整：讓小工具也乖乖排好 */
+@media (max-width: 768px) {
+    .desktop-widget {
+    width: 100px;
+    height: 100px;
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+        margin: 0 auto;
+        width: 100%; 
+        max-width: 100px;
+    }
+/* 指針樣式 */
+.hand {
+    position: absolute;
+    bottom: 45%;
+    left: 50%;
+    transform-origin: bottom center;
+    background: #333;
+    border-radius: 4px;
+    transform: translateX(-50%) rotate(0deg); /* 預設角度 */
+}
+.hand.hour { width: 3px; height: 30px; background: #000; }
+.hand.minute { width: 2px; height: 35px; background: #555; }
+.hand.second { width: 1px; height: 40px; background: #ff3b30; transform-origin: bottom center; }
+
+/* 刻度 */
+.clock-mark {
+    position: absolute;
+    width: 2px; height: 5px;
+    background: #ccc;
+    left: 50%; top: 0px;
+    transform-origin: 50% 50px; /* 繞著中心轉 */
+}
 }

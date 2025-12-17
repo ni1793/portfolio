@@ -57,11 +57,36 @@ const projects = [
 ];
 
 const albumData = [
-    { id: 101, title: "Snap 01", category: "Album", cover: "images/album/01.jpg", description: "Daily Life", images: ["images/album/01.jpg"] },
-    { id: 102, title: "Snap 02", category: "Album", cover: "images/album/02.jpg", description: "Textures", images: ["images/album/02.jpg"] },
-    { id: 103, title: "Snap 03", category: "Album", cover: "images/album/03.jpg", description: "Portraits", images: ["images/album/03.jpg"] },
-    { id: 104, title: "Travel", category: "Album", cover: "images/album/01.jpg", description: "Journey", images: ["images/album/01.jpg", "images/album/02.jpg"] },
-    { id: 105, title: "Sketch", category: "Album", cover: "images/album/02.jpg", description: "Drafts", images: ["images/album/02.jpg", "images/album/03.jpg"] }
+    // 1. 資料夾：Travel (放在左下)
+    { 
+        type: 'folder', id: 101, title: "Travel", category: "Album", 
+        cover: "images/album/01.jpg", description: "Journey", 
+        images: ["images/album/01.jpg", "images/album/02.jpg"],
+        pos: { left: 75, top: 25, rotate: -3 } // 固定位置 %
+    },
+    // 2. 資料夾：Snapshots (放在右上)
+    { 
+        type: 'folder', id: 102, title: "Snapshots", category: "Album", 
+        cover: "images/album/02.jpg", description: "Daily Life", 
+        images: ["images/album/02.jpg", "images/album/03.jpg"],
+        pos: { left: 75, top: 10, rotate: 2 }
+    },
+    
+    // 3. 小工具：時鐘 (放在左上，最顯眼)
+    { 
+        type: 'widget-clock', id: 'w1', title: 'Clock', 
+        pos: { left: 20, top: 10, rotate: 0 } 
+    },
+    // 4. 小工具：行事曆 (放在右下)
+    { 
+        type: 'widget-calendar', id: 'w2', title: 'Calendar', 
+        pos: { left: 20, top: 30, rotate: 0 } 
+    },
+    // 5. 小工具：備忘錄 (放在中間偏下)
+    { 
+        type: 'widget-note', id: 'w3', title: 'Notes', 
+        pos: { left: 45, top: 35, rotate: 4 } 
+    }
 ];
 
 // ===============================================
@@ -94,7 +119,7 @@ tickerImages.forEach(src => {
 });
 
 // ===============================================
-// 3. 桌面資料夾功能 (防止重疊下方物件)
+// 3. 桌面資料夾與小工具功能 (固定位置版)
 // ===============================================
 
 function renderDesktopFolders() {
@@ -102,49 +127,134 @@ function renderDesktopFolders() {
     if (!container) return;
     container.innerHTML = '';
 
+    // 判斷是否為電腦版 (寬度 > 768px)
     const isDesktop = window.innerWidth > 768;
-    let placedPositions = [];
 
-    albumData.forEach((album, index) => {
-        const folder = document.createElement('div');
-        folder.className = 'folder';
-        folder.onclick = () => openProjectDetail(album);
+    albumData.forEach((item) => {
+        let el;
+
+        // --- 1. 判斷類型並建立 HTML 結構 ---
         
-        folder.innerHTML = `
-            <div class="folder-icon">
-                <svg viewBox="0 0 100 100" fill="#007AFF">
-                    <path d="M10,35 L40,35 L45,25 L90,25 C95.5,25 100,29.5 100,35 L100,85 C100,90.5 95.5,95 90,95 L10,95 C4.5,95 0,90.5 0,85 L0,45 C0,39.5 4.5,35 10,35 Z" opacity="0.8"></path>
-                    <rect x="0" y="40" width="100" height="55" rx="5" ry="5"></rect>
-                </svg>
-            </div>
-            <span class="folder-name">${album.title}</span>
-        `;
-
-        if (isDesktop) {
-            const pos = getRandomPosition(index, placedPositions);
-            folder.style.left = pos.left + '%';
-            folder.style.top = pos.top + '%';
-            const rotate = (Math.random() * 16 - 8).toFixed(1); 
-            folder.style.transform = `rotate(${rotate}deg)`;
-            placedPositions.push(pos);
+        // A. 資料夾 (Folder)
+        if (item.type === 'folder') {
+            el = document.createElement('div');
+            el.className = 'folder';
+            el.onclick = () => openProjectDetail(item);
+            el.innerHTML = `
+                <div class="folder-icon">
+                    <svg viewBox="0 0 100 100" fill="#007AFF">
+                        <path d="M10,35 L40,35 L45,25 L90,25 C95.5,25 100,29.5 100,35 L100,85 C100,90.5 95.5,95 90,95 L10,95 C4.5,95 0,90.5 0,85 L0,45 C0,39.5 4.5,35 10,35 Z" opacity="0.8"></path>
+                        <rect x="0" y="40" width="100" height="55" rx="5" ry="5"></rect>
+                    </svg>
+                </div>
+                <span class="folder-name">${item.title}</span>
+            `;
+        } 
+        // B. 時鐘 (Clock)
+        else if (item.type === 'widget-clock') {
+            el = document.createElement('div');
+            el.className = 'desktop-widget widget-clock';
+            // 產生 12 個刻度
+            let marks = '';
+            for(let i=0; i<12; i++) {
+                marks += `<div class="clock-mark" style="transform: rotate(${i*30}deg) translateY(5px)"></div>`;
+            }
+            el.innerHTML = `
+                <div class="clock-face">
+                    ${marks}
+                    <div class="hand hour" id="widget-hour"></div>
+                    <div class="hand minute" id="widget-minute"></div>
+                    <div class="hand second" id="widget-second"></div>
+                </div>
+            `;
+            // 啟動時鐘更新
+            requestAnimationFrame(updateWidgetClock);
         }
-        container.appendChild(folder);
+        // C. 行事曆 (Calendar)
+        else if (item.type === 'widget-calendar') {
+            const now = new Date();
+            const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+            el = document.createElement('div');
+            el.className = 'desktop-widget widget-calendar';
+            el.innerHTML = `
+                <div class="cal-header">${dayNames[now.getDay()]}</div>
+                <div class="cal-body">${now.getDate()}</div>
+            `;
+        }
+        // D. 備忘錄 (Notes)
+        else if (item.type === 'widget-note') {
+            el = document.createElement('div');
+            el.className = 'desktop-widget widget-note';
+            el.innerHTML = `
+                <div class="note-title">To Do</div>
+                <ul class="note-list">
+                    <li>聽音樂 🎧</li>
+                    <li>更新作品集</li>
+                    <li>發呆...</li>
+                </ul>
+            `;
+        }
+
+        // --- 2. 設定位置 (關鍵修改) ---
+        if (el) {
+            // 只有在「電腦版」且該物件有設定「pos」時，才固定位置
+            if (isDesktop && item.pos) {
+                el.style.left = item.pos.left + '%';
+                el.style.top = item.pos.top + '%';
+                
+                // 如果有設定旋轉角度就用，沒有就預設不轉
+                const rotate = item.pos.rotate || 0;
+                el.style.transform = `rotate(${rotate}deg)`;
+            } else {
+                // 手機版或沒設定位置時，清除樣式 (讓 CSS Grid 自動排)
+                el.style.left = '';
+                el.style.top = '';
+                el.style.transform = '';
+            }
+            
+            container.appendChild(el);
+        }
     });
 }
 
+// 桌面時鐘更新函式
+function updateWidgetClock() {
+    const now = new Date();
+    const sec = now.getSeconds();
+    const min = now.getMinutes();
+    const hour = now.getHours();
+
+    const secDeg = (sec / 60) * 360;
+    const minDeg = ((min + sec/60) / 60) * 360;
+    const hourDeg = ((hour + min/60) / 12) * 360;
+
+    const elSec = document.getElementById('widget-second');
+    const elMin = document.getElementById('widget-minute');
+    const elHour = document.getElementById('widget-hour');
+
+    if (elSec && elMin && elHour) {
+        elSec.style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
+        elMin.style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
+        elHour.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+    }
+    requestAnimationFrame(updateWidgetClock);
+}
+
+// 隨機位置產生器 (保持不變)
 function getRandomPosition(index, placedPositions) {
     let top, left;
     let safe = false;
     let attempts = 0;
     
     const centerXMin = 30; const centerXMax = 70; 
-    const centerYMin = 10; const centerYMax = 25; // 避開標題區
+    const centerYMin = 10; const centerYMax = 25;
 
     // 限制生成高度，留白給底部的 Dock 和 Spotify
     const maxTop = 65; 
     const minTop = 15;
     
-    const minDistanceX = 8; const minDistanceY = 12;
+    const minDistanceX = 12; // 稍微增加間距以免小工具互撞
+    const minDistanceY = 15;
 
     while (!safe && attempts < 150) {
         left = Math.random() * 85 + 5; 
@@ -166,15 +276,13 @@ function getRandomPosition(index, placedPositions) {
         attempts++;
     }
     
-    // 如果嘗試失敗，強制排列在上方安全區
-    if (!safe) { left = 5 + (index * 10) % 90; top = 20 + (index * 10) % 40; }
+    if (!safe) { left = 5 + (index * 12) % 90; top = 20 + (index * 10) % 40; }
     
     return { top, left };
 }
 
 renderDesktopFolders();
 window.addEventListener('resize', renderDesktopFolders);
-
 // ===============================================
 // 4. Modal 邏輯 (包含聯絡人視窗)
 // ===============================================
