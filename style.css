@@ -630,3 +630,96 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
     body, a, button, .folder, .work-card { cursor: auto !important; }
     #custom-cursor { display: none; }
 }
+/* style.css - 懸浮提示泡泡 (更新版) */
+
+.hint-bubble {
+    position: fixed;
+    bottom: 40px;
+    right: 30px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    
+    /* 改用 flex 排版，確保內容居中 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    padding: 12px 20px;
+    border-radius: 50px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.05);
+    
+    /* 預設隱藏 */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.8);
+    
+    /* 關鍵：加入 width 的轉場，讓變身時會平滑展開 */
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    z-index: 9999;
+    cursor: pointer;
+    font-size: 20px; /* 初始表情符號大一點 */
+    color: #555;
+    font-weight: 500;
+    pointer-events: none;
+}
+
+/* 顯示狀態 */
+.hint-bubble.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* 展開狀態 (顯示文字時) */
+.hint-bubble.expanded {
+    padding: 12px 25px; /* 增加內距 */
+    font-size: 14px;    /* 文字縮小回正常大小 */
+    background: #ffffff;
+    color: #B1B479;     /* 變成品牌色 */
+}
+
+.hint-bubble:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+/* style.css - 向下捲動提示 */
+
+.scroll-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    cursor: pointer;
+    
+    /* 極簡風格設定 */
+    color: #aaa;       /* 淺灰色，不搶眼 */
+    font-size: 24px;   /* 適中的大小 */
+    opacity: 0.8;
+    
+    /* 動畫與轉場 */
+    animation: floatDown 2s infinite;
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+/* 隱藏狀態 (捲動後) */
+.scroll-hint.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* 滑鼠經過時變色 */
+.scroll-hint:hover {
+    color: #B1B479; /* 品牌色 */
+    opacity: 1;
+}
+
+/* 輕微的上下浮動動畫 */
+@keyframes floatDown {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+}

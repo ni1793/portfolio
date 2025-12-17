@@ -30,6 +30,7 @@
     
     <div class="nav-right contact-trigger" onclick="toggleContactOverlay(true)">
         NI
+
     </div>
 </nav>
 
@@ -58,7 +59,8 @@
     <span class="magic-text" onclick="toggleMagic(this)">in</span> 
     Taiwan.</p>
 </div>
-
+</div> <div id="scroll-hint" class="scroll-hint" onclick="scrollToContent()">
+        <i class="fas fa-chevron-down"></i>
     </div>
 </section>
 
@@ -160,7 +162,11 @@
             </div>
         </div>
     </div>
-
+<div id="hint-bubble" class="hint-bubble" onclick="handleBubbleClick()">
+    <div class="bubble-content">
+        🤫
+    </div>
+</div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
 </body>

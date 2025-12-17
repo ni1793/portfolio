@@ -554,3 +554,76 @@ function toggleMagic(element) {
     });
 
 })();
+// script.js - 提示泡泡邏輯 (兩階段互動版)
+
+const hintBubble = document.getElementById('hint-bubble');
+const bubbleContent = document.querySelector('.bubble-content');
+let isHintRevealed = false; // 狀態標記：false = 顯示表情, true = 顯示文字
+
+// 捲動監聽
+window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const viewportHeight = window.innerHeight;
+
+    // 顯示邏輯 (離開 Hero 區且未到底部)
+    if (scrollY > viewportHeight * 0.5 && scrollY < viewportHeight * 2.5) {
+        hintBubble.classList.add('show');
+    } else {
+        hintBubble.classList.remove('show');
+        
+        // 關鍵：當泡泡消失時，偷偷把它重置回「🤫」狀態
+        // 這樣下次滑過來時，又會變回神秘的樣子
+        setTimeout(() => {
+            resetBubbleState();
+        }, 500); // 等待消失動畫結束後再重置
+    }
+});
+
+// 點擊處理函式
+function handleBubbleClick() {
+    if (!isHintRevealed) {
+        // 第一階段：點擊 🤫 -> 展開變成文字
+        bubbleContent.innerHTML = '<i class="fas fa-arrow-up"></i> 那個...有空的話...要不要找找看 NI 跟 in...';
+        hintBubble.classList.add('expanded'); // 觸發 CSS 變身動畫
+        isHintRevealed = true; // 標記為已揭曉
+    } else {
+        // 第二階段：點擊文字 -> 執行回到頂部
+        scrollToTop();
+    }
+}
+
+// 回到頂部
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+// 重置泡泡狀態函式
+function resetBubbleState() {
+    isHintRevealed = false;
+    bubbleContent.innerHTML = '🤫';
+    hintBubble.classList.remove('expanded');
+}
+// script.js - 向下捲動提示邏輯
+
+const scrollHint = document.getElementById('scroll-hint');
+
+window.addEventListener('scroll', () => {
+    // 只要往下捲動超過 50px，箭頭就消失
+    if (window.scrollY > 50) {
+        scrollHint.classList.add('hide');
+    } else {
+        // 如果回到最頂端，箭頭再次出現
+        scrollHint.classList.remove('hide');
+    }
+});
+
+// 點擊箭頭時，平滑捲動到內容區 (約視窗高度的位置)
+function scrollToContent() {
+    window.scrollTo({
+        top: window.innerHeight,
+        behavior: 'smooth'
+    });
+}
