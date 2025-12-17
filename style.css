@@ -91,7 +91,7 @@ transition: opacity 0.5s;
 .title-designing, .title-possibilities {
     font-family: 'Playfair Display', serif;
     position: absolute;
-    line-height: 1;
+    line-height: 0.5;
     margin: 0;
     z-index: 2;
     pointer-events: none;
@@ -102,7 +102,7 @@ transition: opacity 0.5s;
     color: #91989F;
     font-style: italic;
     top: 25%; /* 靠齊內容區頂部 */
-    left: 10%;
+    left: 15%;
     Bottom: 20%;
 
 }
@@ -111,8 +111,8 @@ transition: opacity 0.5s;
     font-size: 8rem;
     color: #B1B479;
     font-style: italic;
-    bottom: 25%; /* 靠齊內容區底部 */
-    right: 10%;
+    bottom: 40%; /* 靠齊內容區底部 */
+    right: 15%;
 }
 
 /* 文字說明 */
@@ -123,8 +123,8 @@ transition: opacity 0.5s;
     line-height: 1.5;
     z-index: 3;
 }
-.desc-left { top: 60%; left: 15%; }
-.desc-right { top: 30%; right: 13%; text-align: right; }
+.desc-left { top: 55%; left: 15%; }
+.desc-right { top: 20%; right: 13%; text-align: right; }
 
 
 /* style.css - RWD 手機版調整 (最終版：標題在上，小字在下) */
