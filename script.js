@@ -26,7 +26,7 @@ const projects = [
     { 
         id: 5, title: "櫻桃丘比特", category: "中文logo標準字設計", 
         cover: "images/project5/01.jpg", description: "櫻桃丘比特女僕咖啡廳", 
-        images: ["images/project5/01.jpg", "images/project5/02.jpg"] 
+        images: ["images/project5/01.jpg", "images/project5/02.jpg", "images/project5/03.jpg"] 
     },
     { 
         id: 6, title: "麵屋濃軒", category: "logo標準字及海報設計", 
@@ -76,7 +76,7 @@ projects.forEach(project => {
     const card = document.createElement('div');
     card.classList.add('work-card');
     card.innerHTML = `
-        <div class="image-wrapper"><img src="${project.cover}" alt="${project.title}"></div>
+        <div class="image-wrapper"><img src="${project.cover}" alt="${project.title}"loading="lazy"></div>
         <div class="work-info"><span>${project.title}</span><span>${project.category}</span></div>
     `;
     card.addEventListener('click', () => openProjectDetail(project));
@@ -231,6 +231,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 container.appendChild(renderer.domElement);
 
 const vertexShader = `
@@ -290,14 +291,26 @@ let currentScroll = 0;
 let targetScroll = 0;
 let triggerHeight = window.innerHeight * 1.0; 
 
+let isHeroVisible = true; // 新增狀態旗標
+
 window.addEventListener('scroll', () => {
     targetScroll = window.scrollY;
+    
+    // 只有當狀態真的改變時，才去動 CSS
     if (window.scrollY > window.innerHeight * 0.6) {
-        portfolioSection.style.opacity = 1;
-        heroSection.style.opacity = 0;
+        if (isHeroVisible) {
+            portfolioSection.style.opacity = 1;
+            heroSection.style.opacity = 0;
+            heroSection.style.visibility = 'hidden'; // 多加這行，讓滑鼠事件也穿透
+            isHeroVisible = false;
+        }
     } else {
-        portfolioSection.style.opacity = 0;
-        heroSection.style.opacity = 1;
+        if (!isHeroVisible) {
+            portfolioSection.style.opacity = 0;
+            heroSection.style.opacity = 1;
+            heroSection.style.visibility = 'visible';
+            isHeroVisible = true;
+        }
     }
 });
 
@@ -310,12 +323,30 @@ function animate() {
 
     uniforms.uVelocity.value = velocity;
     uniforms.uProgress.value = progress;
+function animate() {
+    requestAnimationFrame(animate);
+
+    // ▼▼▼ 新增這段：如果捲動超過螢幕高度，就停止渲染 ▼▼▼
+    if (window.scrollY > window.innerHeight) {
+        return; // 直接跳出，不耗費 GPU
+    }
+    // ▲▲▲ 休眠結束 ▲▲▲
+
+    currentScroll += (targetScroll - currentScroll) * 0.05;
+    const velocity = (targetScroll - currentScroll) * 0.005;
+    let progress = currentScroll / triggerHeight;
+    progress = Math.max(0, Math.min(progress, 1.2));
+
+    uniforms.uVelocity.value = velocity;
+    uniforms.uProgress.value = progress;
     renderer.render(scene, camera);
-}
+}}
 
 animate();
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+container.appendChild(renderer.domElement);
     triggerHeight = window.innerHeight * 1.0;
     uniforms.uRatio.value = window.innerWidth / window.innerHeight;
 });
@@ -327,8 +358,7 @@ window.addEventListener('resize', () => {
 const cursor = document.getElementById('custom-cursor');
 
 document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
+    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
 });
 
 // Hover 效果
@@ -432,7 +462,7 @@ function toggleMagic(element) {
         antialias: true 
     });
     transRenderer.setSize(window.innerWidth, window.innerHeight);
-    transRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    transRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
     // --- Shader 定義 (移植自您的範例，並調整方向) ---
     const vertexShader = `
