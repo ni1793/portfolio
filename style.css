@@ -424,7 +424,7 @@ transition: opacity 0.5s;
     transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.2s;
     mix-blend-mode: difference;
 }
-body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
+body.hovering #custom-cursor { width: 30px; height: 30px; opacity: 0.4; }
 
 /* Spotify Widget */
 .spotify-widget {
@@ -959,13 +959,18 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
     padding: 0 10px !important; 
     
     /* 如果覺得上方也被切到，可以加一點行高 */
-    line-height: 1.2 !important; 
+line-height: inherit !important;
+vertical-align: baseline !important;
     
-    /* 確保寬度不會被壓縮 */
+/* 保留之前的防止切邊設定 */
+    padding: 0 10px !important; 
     width: auto !important; 
-    
-    /* 稍微調整一下 margin 以抵銷 padding 造成的位移，讓它看起來還是在原地 */
     margin: 0 -5px !important; 
+    
+    /* 保持變身效果 */
+    color: #B1B479;
+    font-weight: 700;
+    transform: rotateY(180deg) scale(1.2); 
 }
 
 /* 2. 針對手機版特別調整 (因為手機版字體很大，需要的空間更多) */
@@ -974,4 +979,43 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
         padding: 0 15px !important; /* 手機版給更多空間 */
         margin: 0 -8px !important;
     }
+}
+/* style.css - 大標題霧面暈染效果 */
+
+/* 1. 針對 Rationality (灰色系) */
+.title-designing {
+    /* text-shadow: 水平位移 垂直位移 暈染半徑 顏色透明度 */
+    text-shadow: 0 0 20px rgba(145, 152, 159, 0.5); 
+    
+    /* filter: blur 讓字體本體的邊緣稍微軟化 (數值越小越清楚) */
+    filter: blur(3px); 
+}
+
+/* 2. 針對 Intuition (綠色系) */
+.title-possibilities {
+    /* 使用跟字體一樣的綠色 (#B1B479) 做暈染 */
+    text-shadow: 0 0 20px rgba(177, 180, 121, 0.5);
+    
+    /* 微微的模糊 */
+    filter: blur(3px);
+}
+
+/* 3. 確保互動的 "In" 也有同樣效果，但保持它的顏色 */
+.magic-text {
+    text-shadow: inherit; /* 跟隨父層的設定 */
+}
+
+/* 當變成 "NI" 時，因為顏色變了，暈染光暈也要跟著變亮一點 */
+.magic-text.is-active {
+    text-shadow: 0 0 25px rgba(177, 180, 121, 0.8) !important;
+    filter: blur(0.5px) !important; /* 變身後稍微清楚一點點，增加層次 */
+}
+/* style.css - 隱藏互動文字的系統滑鼠，改用自訂游標 */
+
+#magic-word, 
+.magic-text, 
+.contact-trigger,
+.magic-text.is-active {
+    /* 關鍵：隱藏系統的手指游標 */
+    cursor: none !important; 
 }

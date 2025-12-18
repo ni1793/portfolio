@@ -57,18 +57,18 @@ const projects = [
 ];
 
 const albumData = [
-    // 1. 資料夾：Travel (放在左下)
+    // 1. 資料夾：AI生成形象照 (放在左下)
     { 
-        type: 'folder', id: 101, title: "Travel", category: "Album", 
-        cover: "images/album/01.jpg", description: "Journey", 
-        images: ["images/album/01.jpg", "images/album/02.jpg"],
+        type: 'folder', id: 101, title: "AI 形象照", category: "Album", 
+        cover: "images/album/a1/01.jpg", description: "使用 AI 指令，完整融合臉部面容，達成在家即可擁有外拍照片的效果", 
+        images: ["images/album/a1/01.jpg", "images/album/a1/02.jpg", "images/album/a1/03.jpg", "images/album/a1/04.jpg", "images/album/a1/05.jpg", "images/album/a1/06.jpg", "images/album/a1/07.jpg", "images/album/a1/08.jpg"],
         pos: { left: 75, top: 25, rotate: -3 } // 固定位置 %
     },
-    // 2. 資料夾：Snapshots (放在右上)
+    // 2. 資料夾：photo (放在右上)
     { 
-        type: 'folder', id: 102, title: "Snapshots", category: "Album", 
-        cover: "images/album/02.jpg", description: "Daily Life", 
-        images: ["images/album/02.jpg", "images/album/03.jpg"],
+        type: 'folder', id: 102, title: "photo", category: "Album", 
+        cover: "images/album/a2/01.jpg", description: "走走路 拍拍照", 
+        images: ["images/album//a2/01.jpg", "images/album/a2/01.jpg"],
         pos: { left: 75, top: 10, rotate: 2 }
     },
     
@@ -469,14 +469,19 @@ container.appendChild(renderer.domElement);
 const cursor = document.getElementById('custom-cursor');
 
 document.addEventListener('mousemove', (e) => {
-    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    // ▼▼▼ 後面補上 translate(-50%, -50%) 讓圓心對準滑鼠 ▼▼▼
+    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
 });
 
 // Hover 效果
 const interactiveElements = document.querySelectorAll('a, button, .work-card, .folder, .close-btn, .custom-dock-item, .info-value, .social-link');
 
+// script.js - 更新 Hover 效果偵測
+
 document.addEventListener('mouseover', (e) => {
     const target = e.target;
+    
+    // 檢查滑鼠是否停在任何「可互動」的物件上
     if (target.closest('a') || 
         target.closest('button') || 
         target.closest('.work-card') || 
@@ -484,10 +489,16 @@ document.addEventListener('mouseover', (e) => {
         target.closest('.close-btn') ||
         target.closest('.custom-dock-item') ||
         target.closest('.info-value') ||
-        target.closest('.social-link')) {
-        document.body.classList.add('hovering');
+        target.closest('.social-link') ||
+        
+        // ▼▼▼ 新增這幾行：讓文字也能觸發游標放大 ▼▼▼
+        target.closest('.magic-text') ||     // 標題與內文的 in
+        target.closest('#magic-word') ||     // 導覽列的 in
+        target.closest('.contact-trigger')   // 導覽列的 NI
+       ) {
+        document.body.classList.add('hovering'); // 游標變大
     } else {
-        document.body.classList.remove('hovering');
+        document.body.classList.remove('hovering'); // 游標恢復
     }
 });
 
