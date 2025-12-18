@@ -22,8 +22,6 @@ a, button, .folder, .work-card, .custom-dock-item {
 
 /* style.css - 整合跑馬燈與雜誌排版 */
 
-/* 引入字體 */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 /* Hero Section 容器調整 */
 .new-hero-layout {
@@ -89,7 +87,9 @@ transition: opacity 0.5s;
 
 /* 大標題樣式 (稍微縮小一點以免太擁擠) */
 .title-designing, .title-possibilities {
-    font-family: 'Playfair Display', serif;
+  font-family: "Rufina", serif;
+  font-weight: 700;
+  font-style: normal;
     position: absolute;
     line-height: 0.5;
     margin: 0;
@@ -111,7 +111,7 @@ transition: opacity 0.5s;
     font-size: 8rem;
     color: #B1B479;
     font-style: italic;
-    bottom: 40%; /* 靠齊內容區底部 */
+    bottom: 38%; /* 靠齊內容區底部 */
     right: 15%;
 }
 
@@ -893,4 +893,59 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
     left: 50%; top: 0px;
     transform-origin: 50% 50px; /* 繞著中心轉 */
 }
+}
+/* =========================================
+   手機版桌面排版 (強烈覆蓋版)
+   放在檔案最下面以確保生效
+   ========================================= */
+@media (max-width: 768px) {
+    
+    /* 1. 容器：切成 6 欄網格 */
+    #desktop-folders-container.folders-container { 
+        display: grid !important; 
+        grid-template-columns: repeat(6, 1fr) !important; /* 關鍵：切成 6 等份 */
+        gap: 15px !important;
+        height: auto !important;
+        padding: 0 15px 40px 15px !important; /* 左右留邊距 */
+        justify-items: center !important;
+        align-items: start !important;
+        margin-top: 20px !important;
+    }
+    
+    /* 2. 資料夾：跨 3 欄 (一行 2 個) */
+    .folder { 
+        grid-column: span 3 !important; /* 3/6 = 50% 寬度 */
+        
+        position: relative !important; 
+        left: auto !important; 
+        top: auto !important; 
+        Bottom: 30px !important; 
+        transform: none !important; 
+        margin: 0 !important;
+        width: auto !important;
+    }
+
+    /* 3. 小工具：跨 2 欄 (一行 3 個) */
+    .desktop-widget {
+        grid-column: span 2 !important; /* 2/6 = 33.3% 寬度 */
+        
+        position: relative !important;
+        left: auto !important; 
+        top: auto !important; 
+        Bottom: -10px !important; 
+        transform: none !important; 
+        margin: 0 !important;
+        
+        /* 強制縮小以塞入一排 3 個 */
+        width: 100% !important; 
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important; /* 保持正方形 */
+        max-width: 100px !important;    /* 限制最大寬度 */
+    }
+    
+    /* 修正小工具內的內容縮放 */
+    .cal-body { font-size: 32px !important; }
+    .widget-note { padding: 10px !important; }
+    .note-title { font-size: 12px !important; }
+    .note-list { font-size: 10px !important; }
 }

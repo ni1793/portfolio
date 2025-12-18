@@ -206,10 +206,12 @@ function renderDesktopFolders() {
                 const rotate = item.pos.rotate || 0;
                 el.style.transform = `rotate(${rotate}deg)`;
             } else {
-                // 手機版或沒設定位置時，清除樣式 (讓 CSS Grid 自動排)
+                // 手機版：清空所有定位樣式
+                el.style.position = ''; 
                 el.style.left = '';
                 el.style.top = '';
-                el.style.transform = '';
+                el.style.transform = ''; 
+                el.style.margin = ''; 
             }
             
             container.appendChild(el);
