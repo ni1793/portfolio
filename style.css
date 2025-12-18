@@ -165,7 +165,7 @@ transition: opacity 0.5s;
     /* Designing: 放在上方偏左 */
     .title-designing {
         font-size: 15vw;
-        top: 2%;        
+        top: 3%;        
         left: 5%;        
         text-align: left;
         transform: none;
@@ -194,14 +194,14 @@ transition: opacity 0.5s;
     
     /* 左側文字：放在倒數第二個位置 */
     .desc-left { 
-        bottom: 97%; /* 距離底部的位置 */
+        bottom: 100%; /* 距離底部的位置 */
         left: 8%; 
         text-align: left;
     }
     
     /* 右側文字：放在最底部 */
     .desc-right { 
-        bottom: 53%; /* 最下面 */
+        bottom: 50%; /* 最下面 */
         right: 8%; 
         text-align: right; 
     }
