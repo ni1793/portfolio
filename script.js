@@ -5,7 +5,7 @@
 const projects = [
     { 
         id: 1, title: "是你嘗試著踢球,還是球引領著你到某方?", category: "展覽主視覺設計", 
-        cover: "images/project1/01.jpg", description: "楊祐丞個展", 
+        cover: "images/project1/02.jpg", description: "楊祐丞個展", 
         images: ["images/project1/01.jpg", "images/project1/02.jpg", "images/project1/03.jpg"] 
     },
     { 
