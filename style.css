@@ -165,7 +165,7 @@ transition: opacity 0.5s;
     /* Designing: 放在上方偏左 */
     .title-designing {
         font-size: 15vw;
-        top: 5%;        
+        top: 2%;        
         left: 5%;        
         text-align: left;
         transform: none;
