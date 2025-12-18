@@ -436,9 +436,10 @@ function animate() {
 function animate() {
     requestAnimationFrame(animate);
 
-    // ▼▼▼ 新增這段：如果捲動超過螢幕高度，就停止渲染 ▼▼▼
-    if (window.scrollY > window.innerHeight) {
-        return; // 直接跳出，不耗費 GPU
+// ▼▼▼ 修改後：給它 2 倍螢幕高度的緩衝距離 ▼▼▼
+    // 這樣就算滑很快，液體也有足夠的時間「流完」再休息
+    if (window.scrollY > window.innerHeight * 2.0) {
+        return; 
     }
     // ▲▲▲ 休眠結束 ▲▲▲
 

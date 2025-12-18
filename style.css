@@ -949,3 +949,29 @@ body.hovering #custom-cursor { width: 20px; height: 20px; opacity: 0.8; }
     .note-title { font-size: 12px !important; }
     .note-list { font-size: 10px !important; }
 }
+/* style.css - 修正 NI 字體被切到的問題 */
+
+/* 1. 給變身後的 NI 更多空間 */
+.magic-text.is-active {
+    display: inline-block;
+    
+    /* 關鍵：增加左右內距，防止斜體字尾巴被切掉 */
+    padding: 0 10px !important; 
+    
+    /* 如果覺得上方也被切到，可以加一點行高 */
+    line-height: 1.2 !important; 
+    
+    /* 確保寬度不會被壓縮 */
+    width: auto !important; 
+    
+    /* 稍微調整一下 margin 以抵銷 padding 造成的位移，讓它看起來還是在原地 */
+    margin: 0 -5px !important; 
+}
+
+/* 2. 針對手機版特別調整 (因為手機版字體很大，需要的空間更多) */
+@media (max-width: 768px) {
+    .magic-text.is-active {
+        padding: 0 15px !important; /* 手機版給更多空間 */
+        margin: 0 -8px !important;
+    }
+}
