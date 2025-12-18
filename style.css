@@ -194,7 +194,7 @@ transition: opacity 0.5s;
     
     /* 左側文字：放在倒數第二個位置 */
     .desc-left { 
-        bottom: 95%; /* 距離底部的位置 */
+        bottom: 97%; /* 距離底部的位置 */
         left: 8%; 
         text-align: left;
     }
