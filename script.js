@@ -791,3 +791,106 @@ function scrollToContent() {
         behavior: 'smooth'
     });
 }
+// ===============================================
+// 9. 實驗檔案室 (Case Study Archive) 邏輯
+// ===============================================
+
+const archiveData = [
+    {
+        id: "01",
+        title: "原界。物種 SOUL ORIGIN ARCHIVE",
+        tags: ["UI 介面設計", "前端開發", "AI 美術生成"],
+        stack: "HTML / CSS / JS, Midjourney",
+        desc: "結合 AI 圖像與神祕學風格的 RWD 網站。\n獨立完成從視覺定調、積分邏輯運算到程式開發，將複雜的人格分析轉化為高質感的視覺體驗。",
+        link: "https://ni1793.github.io/SOUL-ORIGIN-ARCHIVE/"
+    },
+    {
+        id: "02",
+        title: "ECHO",
+        tags: ["敘事設計", "網頁視覺設計"],
+        stack: "Retro Styling, 遊戲化邏輯",
+        desc: "以 2000 年代復古網頁為載體的敘事實驗。\n融合「踩地雷」機制與隱藏線索，透過懷舊的 Lo-fi 視覺風格，引導玩家進行沉浸式的劇情探索。",
+        link: "https://ni1793.github.io/ECHO/"
+    },
+    {
+        id: "03",
+        title: "人類飲食補完計劃",
+        tags: ["UX 使用者體驗", "工具開發"],
+        stack: "Mobile-First, JavaScript",
+        desc: "專為戶外實境遊戲開發的規則與計時網頁。\n採用 Mobile-First 策略，透過高對比視覺與直覺操作，解決玩家在動態環境下的即時資訊需求。",
+        link: "https://ni1793.github.io/THE-EAT---TABLE-COMPLETENESS/"
+    },
+    {
+        id: "04",
+        title: "幼稚園園長守則",
+        tags: ["介面動態設計", "概念設計"],
+        stack: "Dashboard UI, 互動回饋",
+        desc: "模擬監控系統的互動介面。\n透過儀表板 (Dashboard) 設計語言與動態回饋，為特定遊戲腳本創造出具備「掌控感」的角色扮演體驗。",
+        link: "https://ni1793.github.io/kindergarten-principal/"
+    }
+];
+
+function renderArchive() {
+    const container = document.getElementById('archive-container');
+    if (!container) return;
+
+    archiveData.forEach((item) => {
+        // 建立外層
+        const itemEl = document.createElement('div');
+        itemEl.className = 'archive-item';
+        
+        // 建立 HTML 結構
+        itemEl.innerHTML = `
+            <div class="archive-header">
+                <span class="archive-index">${item.id}</span>
+                <span class="archive-title">${item.title}</span>
+                <span class="archive-arrow"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="archive-body">
+                <div class="archive-content-grid">
+                    <div class="archive-tags">
+                        <div class="tag-group">
+                            <h4>Role</h4>
+                            <p>${item.tags.join('<br>')}</p>
+                        </div>
+                        <div class="tag-group">
+                            <h4>Tech</h4>
+                            <p>${item.stack}</p>
+                        </div>
+                    </div>
+                    <div class="archive-desc">
+                        <p>${item.desc}</p>
+                        <a href="${item.link}" target="_blank" class="btn-visit">
+                            VISIT PROJECT <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // 加入點擊監聽 (Accordion 效果)
+        const header = itemEl.querySelector('.archive-header');
+        header.addEventListener('click', () => {
+            const isActive = itemEl.classList.contains('active');
+            
+            // 1. 先關閉所有其他的
+            document.querySelectorAll('.archive-item').forEach(el => {
+                el.classList.remove('active');
+                el.querySelector('.archive-body').style.maxHeight = null;
+            });
+
+            // 2. 如果原本沒開，就打開這個
+            if (!isActive) {
+                itemEl.classList.add('active');
+                const body = itemEl.querySelector('.archive-body');
+                // 動態設定高度以產生 transition
+                body.style.maxHeight = body.scrollHeight + "px";
+            }
+        });
+
+        container.appendChild(itemEl);
+    });
+}
+
+// 執行渲染
+renderArchive();
