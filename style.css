@@ -1389,11 +1389,13 @@ a, button, .folder, .work-card, .custom-dock-item, .ai-feature-section {
 .ai-main-title {
     font-family: 'Inter', sans-serif;
     font-weight: 800;
-    font-size: 8vw;
+    font-size: 7vw;
     line-height: 0.9;
     color: #ffffff;
     text-transform: uppercase;
     letter-spacing: -2px;
+/* ▼ 修改 2：關鍵！強制不換行，字太多會自動往左右延伸 */
+    white-space: nowrap; 
 }
 
 .ai-sub-text {
@@ -1444,11 +1446,124 @@ a, button, .folder, .work-card, .custom-dock-item, .ai-feature-section {
 }
 .close-btn-ai:hover { background: white; color: black; border-color: white; }
 
-.ai-overlay-header {
-    width: 100%; padding: 80px 50px 40px 50px; text-align: center;
+/* =========================================================
+   ★★★ V5: 最終修正版 (可見性優化 + 單向流動) ★★★
+   ========================================================= */
+
+/* 1. 動畫：單一方向無限循環 (從左下往右上方滑動) */
+@keyframes chromeFlow {
+    0% {
+        background-position: 0% 100%;
+    }
+    100% {
+        /* 移動 200% 確保接縫處平滑過渡，創造無限流動感 */
+        background-position: 200% 100%;
+    }
 }
-.ai-overlay-header h3 {
-    font-family: 'Rufina', serif; font-size: 2rem; color: #B1B479; font-style: italic;
+
+/* 2. 容器設定 (維持不變) */
+.ai-overlay-header {
+    width: 100%;
+    padding: 80px 50px 40px 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.liquid-header-container {
+    position: relative;
+    display: inline-block;
+}
+
+.liquid-tag {
+    position: absolute;
+    top: -1.2rem;
+    left: 4px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    z-index: 10;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* 3. 主標題 - 修正 T 消失問題 + 優化金屬質感 */
+.liquid-title {
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    font-size: 8vw;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-align: left;
+    margin: 0;
+    padding-bottom: 30px; /* 避免陰影被切 */
+    
+    /* --- 關鍵：安全描邊 --- */
+    /* 加上 1px 的半透明白邊，確保就算漸層跑到黑色，字體輪廓依然清晰 */
+-webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.5);
+
+    /* --- 鉻金屬漸層 (優化循環) --- */
+    /* 排列順序：深銀 -> 彩虹 -> 亮白 -> 彩虹 -> 深銀
+       這樣頭尾相接時才不會有斷層，T 也不會因為跑到盡頭而變黑消失
+    */
+    background-image: linear-gradient(
+        45deg, /* 角度設定為斜向 */
+        
+        /* [起始] 深色金屬 */
+        #444444 0%,
+        #222222 15%,
+        #000000 25%,
+        
+        /* [第一道光] 油漬彩虹邊緣 */
+        #0022aa 28%, /* 深藍 */
+        #ff00cc 29%, /* 紫紅 */
+        #ffff00 30%, /* 黃 */
+        
+        /* [中心] 極亮高光 (金屬最亮點) */
+        #ffffff 32%, 
+        #ffffff 45%,
+        
+        /* [第二道光] 對稱的彩虹邊緣 */
+        #ffff00 47%, 
+        #ff00cc 48%, 
+        #0022aa 49%, 
+        
+        /* [結尾] 回到深色金屬 (顏色要接回 0% 的 #444) */
+        #000000 55%,
+        #222222 75%,
+        #444444 100%
+    );
+
+    /* 背景放大兩倍，讓光澤有空間移動 */
+    background-size: 200% 200%;
+
+    /* 裁剪文字 */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent; 
+    
+    /* 相容性修正 */
+    -webkit-text-fill-color: transparent;
+
+    /* --- 立體感 --- */
+filter: drop-shadow(0px 0px 10px rgba(255,255,255,0.2)) drop-shadow(0px 10px 20px rgba(0,0,0,0.8));
+
+    /* --- 動畫 --- */
+    /* linear: 等速移動，不會忽快忽慢
+       infinite: 無限循環
+    */
+    animation: chromeFlow 6s linear infinite;
+}
+
+/* 手機版 RWD */
+@media (max-width: 768px) {
+    .liquid-title {
+        font-size: 16vw; 
+        background-size: 300% 300%; 
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+    }
 }
 
 /* 瀑布流網格 */
@@ -1500,7 +1615,7 @@ a, button, .folder, .work-card, .custom-dock-item, .ai-feature-section {
 }
 @media (max-width: 768px) {
     .ai-overlay-grid { column-count: 1; }
-    .ai-main-title { font-size: 15vw; }
+    .ai-main-title { font-size: 11vw; }
     .ai-feature-section { height: 60vh; }
 }
 
@@ -1701,4 +1816,26 @@ body.hovering #custom-cursor { width: 30px; height: 30px; opacity: 0.4; }
     .hand.minute { width: 2px; height: 35px; }
     .hand.second { width: 1px; height: 40px; }
     .clock-mark { transform-origin: 50% 50px; }
+}
+/* --- 新增：AI 區塊副標題樣式 --- */
+.ai-desc-text {
+    font-family: 'Inter', sans-serif, "Microsoft JhengHei"; /* 確保中文顯示正常 */
+    font-size: 15px;       /* 字體大小，可依需求微調 */
+    
+    color: #ffffff;        /* ★ 指定：純白色 */
+    
+    font-weight: 400;      /* 一般粗細 */
+    letter-spacing: 1.5px; /* 字距稍微拉開，增加質感 */
+    line-height: 1.8;      /* 行高，讓兩行中文不要擠在一起 */
+    
+    margin-top: 20px;      /* 距離大標題的空間 */
+    margin-bottom: 30px;   /* 距離 CLICK TO EXPLORE 的空間 */
+    
+    opacity: 0.9;          /* 稍微一點點透明度讓白色不刺眼，或設為 1 全白 */
+}
+
+/* 微調：如果有需要，可以讓大標題的行距緊湊一點，因為現在變兩行了 */
+.ai-main-title {
+    line-height: 1.1;      /* 調整大標題行高 */
+    /* 如果您背景是深色，記得大標題也要是淺色 (如 #fff 或 #ccc) */
 }
