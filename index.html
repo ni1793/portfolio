@@ -6,93 +6,92 @@
     <title>NI - Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rufina:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rufina:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div id="custom-cursor"></div>
-
     <div id="canvas-container"></div>
 
-<section class="hero-section new-hero-layout">
-    <div class="hero-grid-bg"></div>
+    <section class="hero-section new-hero-layout">
+        <div class="hero-grid-bg"></div>
 
-<nav class="navbar">
-    <div class="nav-left">
-        <span id="time-part">00:00:00</span>
-        
-        <span id="magic-word" onclick="toggleMagic(this)">in</span>
-        
-        Taiwan
-    </div>
-    
-    <div class="nav-right contact-trigger" onclick="toggleContactOverlay(true)">
-        NI
+        <nav class="navbar">
+            <div class="nav-left">
+                <span id="time-part">00:00:00</span>
+                <span id="magic-word" onclick="toggleMagic(this)">in</span>
+                Taiwan
+            </div>
+            <div class="nav-right contact-trigger" onclick="toggleContactOverlay(true)">
+                NI
+            </div>
+        </nav>
 
-    </div>
-</nav>
-
-    <div class="ticker-container">
-        <div class="ticker-wrapper">
-            <div class="ticker-track" id="ticker-track"></div>
+        <div class="ticker-container">
+            <div class="ticker-wrapper">
+                <div class="ticker-track" id="ticker-track"></div>
+            </div>
         </div>
-    </div>
 
-    <div class="hero-content">
-        
-        <h1 class="title-designing">Rationality</h1>
-        <h1 class="title-possibilities"><span class="magic-text" onclick="toggleMagic(this)" style="margin: 0; pointer-events: auto;">In</span>tuition</h1>
+        <div class="hero-content">
+            <h1 class="title-designing">Rationality</h1>
+            <h1 class="title-possibilities"><span class="magic-text" onclick="toggleMagic(this)" style="margin: 0; pointer-events: auto;">In</span>tuition</h1>
 
-<div class="desc-text desc-left">
-    <p>Let’s Build<br> 
-    Someth<span class="magic-text" onclick="toggleMagic(this)" style="margin: 0;">in</span>g 
-    Beautiful<br> 
-    Together.</p>
-</div>
+            <div class="desc-text desc-left">
+                <p>Let’s Build<br> 
+                Someth<span class="magic-text" onclick="toggleMagic(this)" style="margin: 0;">in</span>g 
+                Beautiful<br> 
+                Together.</p>
+            </div>
 
-<div class="desc-text desc-right">
-    <p>Hi, I'm <span class="contact-trigger" style="font-weight:600" onclick="toggleContactOverlay(true)">NI</span>,<br> 
-    a Graphic Designer<br>
-    based 
-    <span class="magic-text" onclick="toggleMagic(this)">in</span> 
-    Taiwan.</p>
-</div>
-</div> <div id="scroll-hint" class="scroll-hint" onclick="scrollToContent()">
-        <i class="fas fa-chevron-down"></i>
-    </div>
-</section>
+            <div class="desc-text desc-right">
+                <p>Hi, I'm <span class="contact-trigger" style="font-weight:600" onclick="toggleContactOverlay(true)">NI</span>,<br> 
+                a Graphic Designer<br>
+                based 
+                <span class="magic-text" onclick="toggleMagic(this)">in</span> 
+                Taiwan.</p>
+            </div>
+        </div> 
+        <div id="scroll-hint" class="scroll-hint" onclick="scrollToContent()">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
 
     <div class="scroll-trigger" style="height: 50vh;"></div>
 
+    <section class="ai-feature-section" id="ai-feature-trigger">
+        <div class="ai-feature-bg" id="ai-feature-bg">
+            </div>
+        <div class="ai-feature-content">
+            <h2 class="ai-main-title">AI PORTRAIT<br>COLLECTION</h2>
+            <div class="ai-sub-text">CLICK TO EXPLORE</div>
+        </div>
+    </section>
+
     <section class="portfolio-section" id="work">
-        <div class="section-title">Selected Work</div>
+        <div class="section-title">平面設計作品</div>
         <div class="work-grid" id="work-grid"></div>
     </section>
 
-<section class="case-study-section">
-       <div class="section-title archive-main-title">Web Experiments</div>
-        
-        <div class="archive-container" id="archive-container">
-            </div>
+    <section class="case-study-section">
+        <div class="section-title archive-main-title">Web Experiments</div>
+        <div class="archive-container" id="archive-container"></div>
     </section>
 
     <div id="transition-container">
         <canvas id="transition-canvas"></canvas>
     </div>
-    <section class="desktop-section" id="desktop">
 
     <section class="desktop-section" id="desktop">
         <div class="desktop-bg-grid"></div>
-        <div class="desktop-title">Album</div>
         
         <div id="desktop-folders-container" class="folders-container"></div>
 
         <div class="spotify-widget">
-<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/4PTG3Z6ehGkBFwjybzWkR8?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/4PTG3Z6ehGkBFwjybzWkR8?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
 
         <div class="custom-dock-container">
@@ -124,6 +123,15 @@
         </div>
     </div>
 
+    <div id="ai-overlay" class="ai-overlay">
+        <button class="close-btn-ai" onclick="closeAIOverlay()">✕</button>
+        <div class="ai-overlay-header">
+            <h3>AI PORTRAIT COLLECTION</h3>
+        </div>
+        <div class="ai-overlay-grid" id="ai-overlay-grid">
+            </div>
+    </div>
+
     <div id="custom-contact-overlay" class="contact-overlay hidden">
         <div class="overlay-body">
             <button class="close-btn-overlay" onclick="toggleContactOverlay(false)">✕</button>
@@ -131,7 +139,6 @@
                 <img src="images/avatar.jpg" class="contact-avatar-large" alt="Avatar">
                 <h2 class="contact-name">妮</h2>
                 <p class="contact-job">Graphic Designer</p>
-                
                 <div class="contact-actions">
                     <a href="mailto:trista1793@gmail.com" class="action-btn">
                         <div class="action-icon"><i class="fas fa-envelope"></i></div>
@@ -143,7 +150,6 @@
                     </a>
                 </div>
             </div>
-
             <div class="contact-info-list">
                 <div class="info-group">
                     <div class="info-label">email</div>
@@ -167,11 +173,11 @@
             </div>
         </div>
     </div>
-<div id="hint-bubble" class="hint-bubble" onclick="handleBubbleClick()">
-    <div class="bubble-content">
-        🤫
+
+    <div id="hint-bubble" class="hint-bubble" onclick="handleBubbleClick()">
+        <div class="bubble-content">🤫</div>
     </div>
-</div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
 </body>

@@ -38,7 +38,6 @@ const projects = [
         cover: "images/project7/01.jpg", description: "廖琳俐個展", 
         images: ["images/project7/01.jpg", "images/project7/02.jpg", "images/project7/03.jpg"] 
     },
-
     { 
         id: 8, title: "擁有一具纖薄的身體", category: "展覽主視覺設計", 
         cover: "images/project8/01.jpg", description: "彭思錡個展", 
@@ -56,22 +55,17 @@ const projects = [
     }
 ];
 
-const albumData = [
-    // 1. 資料夾：AI生成形象照 (放在左下)
-    { 
-        type: 'folder', id: 101, title: "AI 形象照", category: "Album", 
-        cover: "images/album/a1/01.jpg", description: "使用 AI 指令，完整融合臉部面容，達成在家即可擁有外拍照片的效果", 
-        images: ["images/album/a1/01.jpg", "images/album/a1/02.jpg", "images/album/a1/03.jpg", "images/album/a1/04.jpg", "images/album/a1/05.jpg", "images/album/a1/06.jpg", "images/album/a1/07.jpg", "images/album/a1/08.jpg"],
-        pos: { left: 75, top: 25, rotate: -3 } // 固定位置 %
-    },
-    // 2. 資料夾：photo (放在右上)
-    { 
-        type: 'folder', id: 102, title: "photo", category: "Album", 
-        cover: "images/album/a2/01.jpg", description: "走走路 拍拍照", 
-        images: ["images/album//a2/01.jpg", "images/album/a2/01.jpg"],
-        pos: { left: 75, top: 10, rotate: 2 }
-    },
-    
+// 這裡保留圖片資料，但會用於上方的 AI 精選區，而不是桌面的資料夾
+const aiImages = [
+    "images/album/a1/01.jpg", "images/album/a1/02.jpg", "images/album/a1/03.jpg", 
+    "images/album/a1/04.jpg", "images/album/a2/01.jpg", "images/album/a2/02.jpg", 
+    "images/album/a2/03.jpg", "images/album/a3/01.jpg", "images/album/a3/02.jpg", "images/album/a3/03.jpg", 
+    "images/album/a4/01.jpg", "images/album/a4/02.jpg", "images/album/a4/03.jpg", "images/album/a4/04.jpg", 
+    "images/album/a5/01.jpg", "images/album/a5/02.jpg", "images/album/a5/03.jpg", "images/album/a5/04.jpg", "images/album/a5/05.jpg", 
+    "images/album/a6/01.jpg", "images/album/a6/02.jpg", "images/album/a6/03.jpg", "images/album/a6/04.jpg", "images/album/a6/05.jpg", "images/album/a6/06.jpg"
+];
+
+const desktopWidgets = [
     // 3. 小工具：時鐘 (放在左上，最顯眼)
     { 
         type: 'widget-clock', id: 'w1', title: 'Clock', 
@@ -101,7 +95,7 @@ projects.forEach(project => {
     const card = document.createElement('div');
     card.classList.add('work-card');
     card.innerHTML = `
-        <div class="image-wrapper"><img src="${project.cover}" alt="${project.title}"loading="lazy"></div>
+        <div class="image-wrapper"><img src="${project.cover}" alt="${project.title}" loading="lazy"></div>
         <div class="work-info"><span>${project.title}</span><span>${project.category}</span></div>
     `;
     card.addEventListener('click', () => openProjectDetail(project));
@@ -119,7 +113,7 @@ tickerImages.forEach(src => {
 });
 
 // ===============================================
-// 3. 桌面資料夾與小工具功能 (固定位置版)
+// 3. 桌面小工具 (移除資料夾)
 // ===============================================
 
 function renderDesktopFolders() {
@@ -127,34 +121,16 @@ function renderDesktopFolders() {
     if (!container) return;
     container.innerHTML = '';
 
-    // 判斷是否為電腦版 (寬度 > 768px)
     const isDesktop = window.innerWidth > 768;
 
-    albumData.forEach((item) => {
+    // ★★★ 修改重點：只渲染 Widget，完全不渲染 folder 類型的項目 ★★★
+    desktopWidgets.forEach((item) => {
         let el;
-
-        // --- 1. 判斷類型並建立 HTML 結構 ---
         
-        // A. 資料夾 (Folder)
-        if (item.type === 'folder') {
-            el = document.createElement('div');
-            el.className = 'folder';
-            el.onclick = () => openProjectDetail(item);
-            el.innerHTML = `
-                <div class="folder-icon">
-                    <svg viewBox="0 0 100 100" fill="#007AFF">
-                        <path d="M10,35 L40,35 L45,25 L90,25 C95.5,25 100,29.5 100,35 L100,85 C100,90.5 95.5,95 90,95 L10,95 C4.5,95 0,90.5 0,85 L0,45 C0,39.5 4.5,35 10,35 Z" opacity="0.8"></path>
-                        <rect x="0" y="40" width="100" height="55" rx="5" ry="5"></rect>
-                    </svg>
-                </div>
-                <span class="folder-name">${item.title}</span>
-            `;
-        } 
         // B. 時鐘 (Clock)
-        else if (item.type === 'widget-clock') {
+        if (item.type === 'widget-clock') {
             el = document.createElement('div');
             el.className = 'desktop-widget widget-clock';
-            // 產生 12 個刻度
             let marks = '';
             for(let i=0; i<12; i++) {
                 marks += `<div class="clock-mark" style="transform: rotate(${i*30}deg) translateY(5px)"></div>`;
@@ -167,7 +143,6 @@ function renderDesktopFolders() {
                     <div class="hand second" id="widget-second"></div>
                 </div>
             `;
-            // 啟動時鐘更新
             requestAnimationFrame(updateWidgetClock);
         }
         // C. 行事曆 (Calendar)
@@ -195,45 +170,35 @@ function renderDesktopFolders() {
             `;
         }
 
-        // --- 2. 設定位置 (關鍵修改) ---
         if (el) {
-            // 只有在「電腦版」且該物件有設定「pos」時，才固定位置
             if (isDesktop && item.pos) {
                 el.style.left = item.pos.left + '%';
                 el.style.top = item.pos.top + '%';
-                
-                // 如果有設定旋轉角度就用，沒有就預設不轉
                 const rotate = item.pos.rotate || 0;
                 el.style.transform = `rotate(${rotate}deg)`;
             } else {
-                // 手機版：清空所有定位樣式
                 el.style.position = ''; 
                 el.style.left = '';
                 el.style.top = '';
                 el.style.transform = ''; 
                 el.style.margin = ''; 
             }
-            
             container.appendChild(el);
         }
     });
 }
 
-// 桌面時鐘更新函式
 function updateWidgetClock() {
     const now = new Date();
     const sec = now.getSeconds();
     const min = now.getMinutes();
     const hour = now.getHours();
-
     const secDeg = (sec / 60) * 360;
     const minDeg = ((min + sec/60) / 60) * 360;
     const hourDeg = ((hour + min/60) / 12) * 360;
-
     const elSec = document.getElementById('widget-second');
     const elMin = document.getElementById('widget-minute');
     const elHour = document.getElementById('widget-hour');
-
     if (elSec && elMin && elHour) {
         elSec.style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
         elMin.style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
@@ -242,51 +207,147 @@ function updateWidgetClock() {
     requestAnimationFrame(updateWidgetClock);
 }
 
-// 隨機位置產生器 (保持不變)
-function getRandomPosition(index, placedPositions) {
-    let top, left;
-    let safe = false;
-    let attempts = 0;
-    
-    const centerXMin = 30; const centerXMax = 70; 
-    const centerYMin = 10; const centerYMax = 25;
-
-    // 限制生成高度，留白給底部的 Dock 和 Spotify
-    const maxTop = 65; 
-    const minTop = 15;
-    
-    const minDistanceX = 12; // 稍微增加間距以免小工具互撞
-    const minDistanceY = 15;
-
-    while (!safe && attempts < 150) {
-        left = Math.random() * 85 + 5; 
-        top = Math.random() * (maxTop - minTop) + minTop; 
-
-        const inCenterX = left > centerXMin && left < centerXMax;
-        const inCenterY = top > centerYMin && top < centerYMax;
-        const hitsText = inCenterX && inCenterY;
-
-        let hitsFolder = false;
-        for (let pos of placedPositions) {
-            const distLeft = Math.abs(left - pos.left);
-            const distTop = Math.abs(top - pos.top);
-            if (distLeft < minDistanceX && distTop < minDistanceY) {
-                hitsFolder = true; break;
-            }
-        }
-        if (!hitsText && !hitsFolder) safe = true;
-        attempts++;
-    }
-    
-    if (!safe) { left = 5 + (index * 12) % 90; top = 20 + (index * 10) % 40; }
-    
-    return { top, left };
-}
-
 renderDesktopFolders();
 window.addEventListener('resize', renderDesktopFolders);
+
 // ===============================================
-// 4. Modal 邏輯 (包含聯絡人視窗)
+// ★★★ 4. 修改：AI Feature Section & Gallery (固定佈局版) ★★★
+// ===============================================
+
+const aiFeatureSection = document.getElementById('ai-feature-trigger');
+const aiBgCollage = document.getElementById('ai-feature-bg');
+const aiOverlay = document.getElementById('ai-overlay');
+const aiOverlayGrid = document.getElementById('ai-overlay-grid');
+
+// A. 初始化上方區塊背景 (邏輯更新：固定座標 + 隨機圖片)
+function initAIFeature() {
+    if(!aiBgCollage) return;
+    aiBgCollage.innerHTML = ''; // 清空
+
+    // 1. 定義固定座標 (參考 Project 313 的圍繞式佈局)
+    // 這些是固定的「坑」，座標以 % 為單位 (left, top)，width 控制大小
+    // 中心點約為 50, 50 (標題位置)，我們避開中間
+    const fixedLayout = [
+        // --- 左半邊 ---
+        { left: 25, top: 25, width: 15 }, // 左上 (加大)
+        { left: 18, top: 50, width: 14 }, // 正左
+        { left: 28, top: 75, width: 16 }, // 左下
+
+        // --- 右半邊 ---
+        { left: 75, top: 25, width: 16 }, // 右上
+        { left: 82, top: 50, width: 14 }, // 正右
+        { left: 72, top: 75, width: 17 }, // 右下
+
+        // --- 中間補強 ---
+        { left: 45, top: 18, width: 13 }, // 正上方
+        { left: 55, top: 82, width: 15 }  // 正下方
+    ];
+
+    // 2. 資料篩選邏輯：同資料夾只取一張 (避免重複)
+    const folderMap = {};
+    // 先隨機打亂原始圖片庫
+    const shuffledSource = [...aiImages].sort(() => 0.5 - Math.random());
+
+    shuffledSource.forEach(path => {
+        const folder = path.substring(0, path.lastIndexOf('/'));
+        if (!folderMap[folder]) {
+            folderMap[folder] = path;
+        }
+    });
+    
+    // 取得篩選後的圖片清單
+    const selectedImages = Object.values(folderMap);
+
+    // 3. 將圖片填入固定坑位
+    // 我們只跑 fixedLayout 的迴圈，如果圖片不夠就只填前面幾個
+    fixedLayout.forEach((slot, index) => {
+        // 如果圖片用完了就停止
+        if (index >= selectedImages.length) return;
+
+        const src = selectedImages[index]; // 依序取出隨機排序後的圖片
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'ai-floating-img';
+        
+        // 套用固定樣式
+        img.style.width = `${slot.width}%`;
+        img.style.left = `${slot.left}%`;
+        img.style.top = `${slot.top}%`;
+        
+        // 確保直立不旋轉，並設定基準點置中
+        img.style.transform = `translate(-50%, -50%)`;
+
+        aiBgCollage.appendChild(img);
+    });
+
+    // 4. 滑鼠視差效果 (Parallax)
+    aiFeatureSection.addEventListener('mousemove', (e) => {
+        // 計算滑鼠相對於視窗中心的偏移量 (-1 到 1)
+        const x = (e.clientX / window.innerWidth - 0.5) * 2; 
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        
+        const imgs = document.querySelectorAll('.ai-floating-img');
+        imgs.forEach((img, i) => {
+            // 設定移動係數：有些動得快(20px)，有些動得慢(10px)
+            // 偶數索引動得快一點，製造層次感
+            const intensity = (i % 2 === 0) ? 20 : 10;
+            
+            const moveX = x * intensity;
+            const moveY = y * intensity;
+            
+            // 重要：保留 translate(-50%, -50%) 讓定位準確，再疊加視差位移
+            img.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+        });
+    });
+
+    // 點擊觸發全螢幕
+    aiFeatureSection.addEventListener('click', openAIOverlay);
+}
+
+// B. 開啟全螢幕圖庫 (保持不變，包含手機版滾動偵測)
+function openAIOverlay() {
+    aiOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    if (aiOverlayGrid.children.length === 0) {
+        aiImages.forEach(src => {
+            const item = document.createElement('div');
+            item.className = 'ai-gallery-item';
+            
+            const img = document.createElement('img');
+            img.src = src;
+            img.loading = "lazy";
+            
+            item.appendChild(img);
+            aiOverlayGrid.appendChild(item);
+        });
+        observeImagesInView();
+    }
+}
+
+// C. 輔助函式 (保持不變)
+function observeImagesInView() {
+    const observerOptions = { root: aiOverlay, threshold: 0.2 };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('in-view');
+            else entry.target.classList.remove('in-view'); 
+        });
+    }, observerOptions);
+    const items = document.querySelectorAll('.ai-gallery-item');
+    items.forEach(item => observer.observe(item));
+}
+
+function closeAIOverlay() {
+    aiOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// 執行初始化
+initAIFeature();
+
+// ===============================================
+// 5. 原有 Modal 邏輯
 // ===============================================
 
 const modal = document.getElementById('project-modal');
@@ -310,32 +371,29 @@ function openProjectDetail(item) {
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-document.getElementById('hint-bubble').style.display = 'none';
+    document.getElementById('hint-bubble').style.display = 'none';
 }
 
 function closeModal() {
     modal.classList.remove('active');
     document.body.style.overflow = '';
-document.getElementById('hint-bubble').style.display = '';
+    document.getElementById('hint-bubble').style.display = '';
 }
 
-// 切換聯絡人視窗
 function toggleContactOverlay(show) {
     const overlay = document.getElementById('custom-contact-overlay');
-    if (show) {
-        overlay.classList.remove('hidden');
-    } else {
-        overlay.classList.add('hidden');
-    }
+    if (show) overlay.classList.remove('hidden');
+    else overlay.classList.add('hidden');
 }
 
 // ===============================================
-// 5. WebGL Shader
+// 6. WebGL Shader (修正版：讓上方的 WebGL 正確顯示)
 // ===============================================
 
 const container = document.getElementById('canvas-container');
 const portfolioSection = document.querySelector('.portfolio-section');
 const heroSection = document.querySelector('.hero-section');
+const aiSection = document.querySelector('.ai-feature-section'); // 新增
 
 const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -344,11 +402,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 container.appendChild(renderer.domElement);
 
-const vertexShader = `
-    varying vec2 vUv;
-    void main() { vUv = uv; gl_Position = vec4(position, 1.0); }
-`;
-
+const vertexShader = `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position, 1.0); }`;
 const fragmentShader = `
     varying vec2 vUv;
     uniform float uProgress; 
@@ -357,28 +411,22 @@ const fragmentShader = `
     vec3 c_bg = vec3(1.0, 1.0, 1.0);
     vec3 c_edge = vec3(1.0, 0.45, 0.05);
     vec3 c_body = vec3(0.05, 0.05, 0.05);
-
     void main() {
         vec2 center = vec2(0.5, 1.2); 
         vec2 pos = vUv - center;
         pos.x *= 0.6 * uRatio; 
         float dist = length(pos);
-        
         float centerFocus = 1.0 - smoothstep(0.0, 0.8, abs(pos.x));
         centerFocus = pow(centerFocus, 1.5);
-        
         float warp = sin(pos.x * 5.0 + uProgress) * uVelocity * 0.2;
         dist -= warp;
-        
         float progressValue = (uProgress * 2.5) - dist;
         float edgeWidth = 0.02 + (0.04 * centerFocus);
-
         float bodyMask = smoothstep(0.5, 0.51, progressValue);
         float glowStart = 0.5 - edgeWidth;
         float glowMask = smoothstep(glowStart, 0.5, progressValue);
         float glowGradient = (progressValue - glowStart) / edgeWidth;
         glowGradient = clamp(glowGradient, 0.0, 1.0);
-
         vec3 finalColor = c_bg;
         float finalGlowAlpha = glowMask * (1.0 - bodyMask);
         finalColor = mix(finalColor, c_edge, finalGlowAlpha * glowGradient * 1.5);
@@ -400,23 +448,26 @@ scene.add(new THREE.Mesh(geometry, material));
 let currentScroll = 0;
 let targetScroll = 0;
 let triggerHeight = window.innerHeight * 1.0; 
-
-let isHeroVisible = true; // 新增狀態旗標
+let isHeroVisible = true;
 
 window.addEventListener('scroll', () => {
     targetScroll = window.scrollY;
     
-    // 只有當狀態真的改變時，才去動 CSS
-    if (window.scrollY > window.innerHeight * 0.6) {
+    if (window.scrollY > window.innerHeight * 0.5) {
         if (isHeroVisible) {
+            // ★★★ 修改：同時讓 AI 區塊與作品集顯示 ★★★
             portfolioSection.style.opacity = 1;
+            if(aiSection) aiSection.style.opacity = 1; // 新增
+            
             heroSection.style.opacity = 0;
-            heroSection.style.visibility = 'hidden'; // 多加這行，讓滑鼠事件也穿透
+            heroSection.style.visibility = 'hidden';
             isHeroVisible = false;
         }
     } else {
         if (!isHeroVisible) {
             portfolioSection.style.opacity = 0;
+            if(aiSection) aiSection.style.opacity = 0; // 新增
+            
             heroSection.style.opacity = 1;
             heroSection.style.visibility = 'visible';
             isHeroVisible = true;
@@ -426,22 +477,9 @@ window.addEventListener('scroll', () => {
 
 function animate() {
     requestAnimationFrame(animate);
-    currentScroll += (targetScroll - currentScroll) * 0.05;
-    const velocity = (targetScroll - currentScroll) * 0.005;
-    let progress = currentScroll / triggerHeight;
-    progress = Math.max(0, Math.min(progress, 1.2));
-
-    uniforms.uVelocity.value = velocity;
-    uniforms.uProgress.value = progress;
-function animate() {
-    requestAnimationFrame(animate);
-
-// ▼▼▼ 修改後：給它 2 倍螢幕高度的緩衝距離 ▼▼▼
-    // 這樣就算滑很快，液體也有足夠的時間「流完」再休息
-    if (window.scrollY > window.innerHeight * 2.0) {
-        return; 
-    }
-    // ▲▲▲ 休眠結束 ▲▲▲
+    
+    // ★★★ 移除睡眠邏輯，確保變形效果始終運作 ★★★
+    // 原本的 return 邏輯刪除，確保 user 滾動時始終有反應
 
     currentScroll += (targetScroll - currentScroll) * 0.05;
     const velocity = (targetScroll - currentScroll) * 0.005;
@@ -451,225 +489,122 @@ function animate() {
     uniforms.uVelocity.value = velocity;
     uniforms.uProgress.value = progress;
     renderer.render(scene, camera);
-}}
-
+}
 animate();
+
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-container.appendChild(renderer.domElement);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     triggerHeight = window.innerHeight * 1.0;
     uniforms.uRatio.value = window.innerWidth / window.innerHeight;
 });
 
 // ===============================================
-// 6. 自訂游標邏輯
+// 7. 自訂游標與互動 (保留)
 // ===============================================
 
 const cursor = document.getElementById('custom-cursor');
-
 document.addEventListener('mousemove', (e) => {
-    // ▼▼▼ 後面補上 translate(-50%, -50%) 讓圓心對準滑鼠 ▼▼▼
     cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
 });
-
-// Hover 效果
-const interactiveElements = document.querySelectorAll('a, button, .work-card, .folder, .close-btn, .custom-dock-item, .info-value, .social-link');
-
-// script.js - 更新 Hover 效果偵測
-
 document.addEventListener('mouseover', (e) => {
     const target = e.target;
-    
-    // 檢查滑鼠是否停在任何「可互動」的物件上
-    if (target.closest('a') || 
-        target.closest('button') || 
-        target.closest('.work-card') || 
-        target.closest('.folder') ||
-        target.closest('.close-btn') ||
-        target.closest('.custom-dock-item') ||
-        target.closest('.info-value') ||
-        target.closest('.social-link') ||
-        
-        // ▼▼▼ 新增這幾行：讓文字也能觸發游標放大 ▼▼▼
-        target.closest('.magic-text') ||     // 標題與內文的 in
-        target.closest('#magic-word') ||     // 導覽列的 in
-        target.closest('.contact-trigger')   // 導覽列的 NI
+    if (target.closest('a') || target.closest('button') || target.closest('.work-card') || 
+        target.closest('.folder') || target.closest('.close-btn') || target.closest('.custom-dock-item') ||
+        target.closest('.info-value') || target.closest('.social-link') || target.closest('.magic-text') ||     
+        target.closest('#magic-word') || target.closest('.contact-trigger') || target.closest('.ai-feature-section') || 
+        target.closest('.close-btn-ai')
        ) {
-        document.body.classList.add('hovering'); // 游標變大
+        document.body.classList.add('hovering');
     } else {
-        document.body.classList.remove('hovering'); // 游標恢復
+        document.body.classList.remove('hovering');
     }
 });
 
-// Spotify Widget 區域：隱藏自訂紅點
-const spotifyWidget = document.querySelector('.spotify-widget');
-if (spotifyWidget) {
-    spotifyWidget.addEventListener('mouseenter', () => {
-        cursor.style.opacity = '0'; 
-    });
-    spotifyWidget.addEventListener('mouseleave', () => {
-        cursor.style.opacity = '1'; 
-    });
-}
-
-// script.js
-
 // ===============================================
-// 7. 左上角即時時鐘 (修改版) & 互動彩蛋
+// 8. 左上角時鐘與 NI 互動 (保留)
 // ===============================================
-
 function updateClock() {
-    // 修改目標：只抓取數字部分的 span
     const timeDisplay = document.getElementById('time-part');
     if (!timeDisplay) return;
-
     const now = new Date();
-    
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
-
-    // 只更新時間數字，保留後面的 span 結構
     timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
-
     requestAnimationFrame(updateClock);
 }
-
-// 啟動時鐘
 updateClock();
 
-// --- 新增：點擊 "in" 的互動函式 ---
 function toggleMagic(element) {
-    // 檢查是否已經變成 NI 了
     if (element.classList.contains('is-active')) {
-        // 第 2 階段：已經是 NI 了，點擊打開聯絡視窗
         toggleContactOverlay(true);
     } else {
-        // 第 1 階段：還是 in，執行變身動畫
-        
-        // 1. 先旋轉一半 (90度)
         element.style.transform = "rotateY(90deg)";
-        
-        // 2. 在旋轉到看不見時，偷換文字
         setTimeout(() => {
-            element.textContent = "NI"; // 改成 NI
-            element.classList.add('is-active'); //這會觸發 CSS 的變色與最終旋轉
-            
-            // 因為 CSS 設定 rotateY(180deg)，這裡文字會是反的
-            // 所以我們不需要在這裡手動設回 0deg，而是利用 180deg 剛好翻轉的效果
-            // 但因為文字鏡像了，我們可以用 scaleX(-1) 修正，或者直接用 rotate(360)
-            // 為了簡單，我們讓它轉一圈變正：
+            element.textContent = "NI";
+            element.classList.add('is-active');
             element.style.transform = "rotateY(360deg) scale(1.2)";
-            
-        }, 150); // 等待 CSS transition 一半的時間
+        }, 150);
     }
 }
-// ===============================================
-// 8. 第二個 WebGL 渲染器：區塊間的過渡特效 (橘色黏液版)
-// ===============================================
 
+// ===============================================
+// 9. 第二個 WebGL 渲染器 (橘色液體)
+// ===============================================
 (function initTransitionWebGL() {
     const transContainer = document.getElementById('transition-container');
     const transCanvas = document.getElementById('transition-canvas');
-
     if (!transContainer || !transCanvas) return;
 
-    // --- 初始化第二個 THREE.js 場景 ---
     const transScene = new THREE.Scene();
     const transCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const transRenderer = new THREE.WebGLRenderer({ 
-        canvas: transCanvas, 
-        alpha: true, // 允許透明
-        antialias: true 
-    });
+    const transRenderer = new THREE.WebGLRenderer({ canvas: transCanvas, alpha: true, antialias: true });
     transRenderer.setSize(window.innerWidth, window.innerHeight);
     transRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-
-    // --- Shader 定義 (移植自您的範例，並調整方向) ---
-    const vertexShader = `
-        varying vec2 vUv;
-        void main() { vUv = uv; gl_Position = vec4(position, 1.0); }
-    `;
 
     const fragmentShader = `
         varying vec2 vUv;
         uniform float uProgress; 
         uniform float uVelocity;
         uniform float uRatio;
-
-        // 背景色 (透明)
         vec4 c_bg = vec4(0.0, 0.0, 0.0, 0.0); 
-        // 邊緣色 (亮橘色)
         vec3 c_edge = vec3(1.0, 0.45, 0.05); 
-        // 主體色 (純黑，連接上方的作品集)
         vec3 c_body = vec3(0.05, 0.05, 0.05); 
-
         void main() {
-            // --- 1. 形狀與位置 ---
-            // 設定中心在頂部上方 (1.3)，讓液體看起來是從上面流下來/拉上去的
             vec2 center = vec2(0.5, 1.3); 
             vec2 pos = vUv - center;
             pos.x *= 0.9 * uRatio; 
             float dist = length(pos);
-
-            // --- 2. 中間集中度 ---
             float centerFocus = 1.0 - smoothstep(0.0, 0.7, abs(pos.x));
             centerFocus = centerFocus * centerFocus; 
-
-            // 速度扭曲
             float warp = sin(pos.x * 5.0 + uProgress * 2.0) * uVelocity * 0.1;
             dist -= warp;
-
-            // --- 3. 進度計算 ---
-            // 隨著 uProgress 從 1 變 0，黑色區域會逐漸縮小
             float progressValue = (uProgress * 1.5 + 0.5) - dist;
-
-            // --- 4. 色散範圍 (尾巴) ---
             float baseTail = 0.02; 
-            float extraTail = 0.25 * centerFocus; // 中間尾巴更長
+            float extraTail = 0.25 * centerFocus;
             float totalTailLength = baseTail + extraTail;
-
-            // --- 5. 繪製 ---
             float bodyCutoff = 0.5;
             float bodyMask = smoothstep(bodyCutoff, bodyCutoff + 0.01, progressValue);
-
             float glowStart = bodyCutoff - totalTailLength;
             float glowMask = smoothstep(glowStart, bodyCutoff, progressValue);
-            
             float glowGradient = (progressValue - glowStart) / totalTailLength;
             glowGradient = clamp(glowGradient, 0.0, 1.0); 
             glowGradient = pow(glowGradient, 0.6);
-
-            // --- 6. 合成 ---
             vec4 finalColor = c_bg;
-            
-            // 橘色光暈
             float finalGlowAlpha = glowMask * (1.0 - bodyMask);
             finalColor.rgb = mix(finalColor.rgb, c_edge, finalGlowAlpha * glowGradient * 1.8);
             finalColor.a = max(finalColor.a, finalGlowAlpha);
-
-            // 黑色主體
             finalColor.rgb = mix(finalColor.rgb, c_body, bodyMask);
             finalColor.a = max(finalColor.a, bodyMask);
-
             gl_FragColor = finalColor;
         }
     `;
 
-    const uniforms = {
-        uProgress: { value: 1.0 }, // 初始全黑
-        uVelocity: { value: 0 },
-        uRatio: { value: window.innerWidth / window.innerHeight }
-    };
-
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    const material = new THREE.ShaderMaterial({ 
-        vertexShader, fragmentShader, uniforms, transparent: true 
-    });
+    const uniforms = { uProgress: { value: 1.0 }, uVelocity: { value: 0 }, uRatio: { value: window.innerWidth / window.innerHeight } };
+    const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms, transparent: true });
     transScene.add(new THREE.Mesh(geometry, material));
 
-    // --- 捲動監聽與動畫 ---
     let currentTransScroll = 1;
     let targetTransScroll = 1;
     let isTransVisible = false;
@@ -677,21 +612,13 @@ function toggleMagic(element) {
     window.addEventListener('scroll', () => {
         const rect = transContainer.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-
-        // 判斷容器是否在畫面中
         isTransVisible = (rect.top < viewportHeight && rect.bottom > 0);
-        
         if (isTransVisible) {
-            // 計算捲動進度 (0% ~ 100%)
-            const start = rect.top + window.scrollY; // 容器頂端絕對位置
-            const distance = window.scrollY - start; // 已捲動距離
-            const totalDistance = rect.height - viewportHeight; // 可捲動總長度
-
+            const start = rect.top + window.scrollY;
+            const distance = window.scrollY - start;
+            const totalDistance = rect.height - viewportHeight;
             let progress = distance / totalDistance;
             progress = Math.max(0, Math.min(1, progress));
-            
-            // 捲動時：進度 0 (剛進入) -> uProgress 1 (全黑)
-            //        進度 1 (離開)   -> uProgress 0 (消失)
             targetTransScroll = 1.0 - progress;
         }
     });
@@ -699,11 +626,8 @@ function toggleMagic(element) {
     function animateTrans() {
         requestAnimationFrame(animateTrans);
         if (!isTransVisible) return;
-
-        // 平滑插值
         currentTransScroll += (targetTransScroll - currentTransScroll) * 0.08;
         const velocity = (targetTransScroll - currentTransScroll) * 8.0;
-
         uniforms.uProgress.value = currentTransScroll;
         uniforms.uVelocity.value = velocity;
         transRenderer.render(transScene, transCamera);
@@ -711,135 +635,61 @@ function toggleMagic(element) {
     animateTrans();
 
     window.addEventListener('resize', () => {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        transRenderer.setSize(width, height);
-        uniforms.uRatio.value = width / height;
+        transRenderer.setSize(window.innerWidth, window.innerHeight);
+        uniforms.uRatio.value = window.innerWidth / window.innerHeight;
     });
-
 })();
-// script.js - 提示泡泡邏輯 (兩階段互動版)
+
+// ===============================================
+// 10. 提示與檔案室邏輯 (保留)
+// ===============================================
 
 const hintBubble = document.getElementById('hint-bubble');
 const bubbleContent = document.querySelector('.bubble-content');
-let isHintRevealed = false; // 狀態標記：false = 顯示表情, true = 顯示文字
+let isHintRevealed = false;
 
-// 捲動監聽
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
     const viewportHeight = window.innerHeight;
-
-    // 顯示邏輯 (離開 Hero 區且未到底部)
     if (scrollY > viewportHeight * 0.5 && scrollY < viewportHeight * 2.5) {
         hintBubble.classList.add('show');
     } else {
         hintBubble.classList.remove('show');
-        
-        // 關鍵：當泡泡消失時，偷偷把它重置回「🤫」狀態
-        // 這樣下次滑過來時，又會變回神秘的樣子
-        setTimeout(() => {
-            resetBubbleState();
-        }, 500); // 等待消失動畫結束後再重置
+        setTimeout(() => { resetBubbleState(); }, 500);
     }
 });
 
-// 點擊處理函式
 function handleBubbleClick() {
     if (!isHintRevealed) {
-        // 第一階段：點擊 🤫 -> 展開變成文字
         bubbleContent.innerHTML = '<i class="fas fa-arrow-up"></i> 那個...有空的話...要不要找找看 NI 跟 in...';
-        hintBubble.classList.add('expanded'); // 觸發 CSS 變身動畫
-        isHintRevealed = true; // 標記為已揭曉
-    } else {
-        // 第二階段：點擊文字 -> 執行回到頂部
-        scrollToTop();
-    }
+        hintBubble.classList.add('expanded');
+        isHintRevealed = true;
+    } else { scrollToTop(); }
 }
 
-// 回到頂部
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
-
-// 重置泡泡狀態函式
-function resetBubbleState() {
-    isHintRevealed = false;
-    bubbleContent.innerHTML = '🤫';
-    hintBubble.classList.remove('expanded');
-}
-// script.js - 向下捲動提示邏輯
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function resetBubbleState() { isHintRevealed = false; bubbleContent.innerHTML = '🤫'; hintBubble.classList.remove('expanded'); }
 
 const scrollHint = document.getElementById('scroll-hint');
-
 window.addEventListener('scroll', () => {
-    // 只要往下捲動超過 50px，箭頭就消失
-    if (window.scrollY > 50) {
-        scrollHint.classList.add('hide');
-    } else {
-        // 如果回到最頂端，箭頭再次出現
-        scrollHint.classList.remove('hide');
-    }
+    if (window.scrollY > 50) scrollHint.classList.add('hide');
+    else scrollHint.classList.remove('hide');
 });
-
-// 點擊箭頭時，平滑捲動到內容區 (約視窗高度的位置)
-function scrollToContent() {
-    window.scrollTo({
-        top: window.innerHeight,
-        behavior: 'smooth'
-    });
-}
-// ===============================================
-// 9. 實驗檔案室 (Case Study Archive) 邏輯
-// ===============================================
+function scrollToContent() { window.scrollTo({ top: window.innerHeight, behavior: 'smooth' }); }
 
 const archiveData = [
-    {
-        id: "01",
-        title: "原界。物種 SOUL ORIGIN ARCHIVE",
-        tags: ["UI 介面設計", "前端開發", "AI 美術生成"],
-        stack: "HTML / CSS / JS, Midjourney",
-        desc: "結合 AI 圖像與神祕學風格的 RWD 網站。\n獨立完成從視覺定調、積分邏輯運算到程式開發，將複雜的人格分析轉化為高質感的視覺體驗。",
-        link: "https://ni1793.github.io/SOUL-ORIGIN-ARCHIVE/"
-    },
-    {
-        id: "02",
-        title: "ECHO",
-        tags: ["敘事設計", "網頁視覺設計"],
-        stack: "Retro Styling, 遊戲化邏輯",
-        desc: "以 2000 年代復古網頁為載體的敘事實驗。\n融合「踩地雷」機制與隱藏線索，透過懷舊的 Lo-fi 視覺風格，引導玩家進行沉浸式的劇情探索。",
-        link: "https://ni1793.github.io/ECHO/"
-    },
-    {
-        id: "03",
-        title: "人類飲食補完計劃",
-        tags: ["UX 使用者體驗", "工具開發"],
-        stack: "Mobile-First, JavaScript",
-        desc: "專為戶外實境遊戲開發的規則與計時網頁。\n採用 Mobile-First 策略，透過高對比視覺與直覺操作，解決玩家在動態環境下的即時資訊需求。",
-        link: "https://ni1793.github.io/THE-EAT---TABLE-COMPLETENESS/"
-    },
-    {
-        id: "04",
-        title: "幼稚園園長守則",
-        tags: ["介面動態設計", "概念設計"],
-        stack: "Dashboard UI, 互動回饋",
-        desc: "模擬監控系統的互動介面。\n透過儀表板 (Dashboard) 設計語言與動態回饋，為特定遊戲腳本創造出具備「掌控感」的角色扮演體驗。",
-        link: "https://ni1793.github.io/kindergarten-principal/"
-    }
+    { id: "01", title: "原界。物種 SOUL ORIGIN ARCHIVE", tags: ["UI 介面設計", "前端開發", "AI 美術生成"], stack: "HTML / CSS / JS, Midjourney", desc: "結合 AI 圖像與神祕學風格的 RWD 網站。\n獨立完成從視覺定調、積分邏輯運算到程式開發，將複雜的人格分析轉化為高質感的視覺體驗。", link: "https://ni1793.github.io/SOUL-ORIGIN-ARCHIVE/" },
+    { id: "02", title: "ECHO", tags: ["敘事設計", "網頁視覺設計"], stack: "Retro Styling, 遊戲化邏輯", desc: "以 2000 年代復古網頁為載體的敘事實驗。\n融合「踩地雷」機制與隱藏線索，透過懷舊的 Lo-fi 視覺風格，引導玩家進行沉浸式的劇情探索。", link: "https://ni1793.github.io/ECHO/" },
+    { id: "03", title: "人類飲食補完計劃", tags: ["UX 使用者體驗", "工具開發"], stack: "Mobile-First, JavaScript", desc: "專為戶外實境遊戲開發的規則與計時網頁。\n採用 Mobile-First 策略，透過高對比視覺與直覺操作，解決玩家在動態環境下的即時資訊需求。", link: "https://ni1793.github.io/THE-EAT---TABLE-COMPLETENESS/" },
+    { id: "04", title: "幼稚園園長守則", tags: ["介面動態設計", "概念設計"], stack: "Dashboard UI, 互動回饋", desc: "模擬監控系統的互動介面。\n透過儀表板 (Dashboard) 設計語言與動態回饋，為特定遊戲腳本創造出具備「掌控感」的角色扮演體驗。", link: "https://ni1793.github.io/kindergarten-principal/" }
 ];
 
 function renderArchive() {
     const container = document.getElementById('archive-container');
     if (!container) return;
-
     archiveData.forEach((item) => {
-        // 建立外層
         const itemEl = document.createElement('div');
         itemEl.className = 'archive-item';
-        
-        // 建立 HTML 結構
         itemEl.innerHTML = `
             <div class="archive-header">
                 <span class="archive-index">${item.id}</span>
@@ -849,48 +699,23 @@ function renderArchive() {
             <div class="archive-body">
                 <div class="archive-content-grid">
                     <div class="archive-tags">
-                        <div class="tag-group">
-                            <h4>Role</h4>
-                            <p>${item.tags.join('<br>')}</p>
-                        </div>
-                        <div class="tag-group">
-                            <h4>Tech</h4>
-                            <p>${item.stack}</p>
-                        </div>
+                        <div class="tag-group"><h4>Role</h4><p>${item.tags.join('<br>')}</p></div>
+                        <div class="tag-group"><h4>Tech</h4><p>${item.stack}</p></div>
                     </div>
                     <div class="archive-desc">
                         <p>${item.desc}</p>
-                        <a href="${item.link}" target="_blank" class="btn-visit">
-                            VISIT PROJECT <i class="fas fa-arrow-right"></i>
-                        </a>
+                        <a href="${item.link}" target="_blank" class="btn-visit">VISIT PROJECT <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
         `;
-
-        // 加入點擊監聽 (Accordion 效果)
         const header = itemEl.querySelector('.archive-header');
         header.addEventListener('click', () => {
             const isActive = itemEl.classList.contains('active');
-            
-            // 1. 先關閉所有其他的
-            document.querySelectorAll('.archive-item').forEach(el => {
-                el.classList.remove('active');
-                el.querySelector('.archive-body').style.maxHeight = null;
-            });
-
-            // 2. 如果原本沒開，就打開這個
-            if (!isActive) {
-                itemEl.classList.add('active');
-                const body = itemEl.querySelector('.archive-body');
-                // 動態設定高度以產生 transition
-                body.style.maxHeight = body.scrollHeight + "px";
-            }
+            document.querySelectorAll('.archive-item').forEach(el => { el.classList.remove('active'); el.querySelector('.archive-body').style.maxHeight = null; });
+            if (!isActive) { itemEl.classList.add('active'); const body = itemEl.querySelector('.archive-body'); body.style.maxHeight = body.scrollHeight + "px"; }
         });
-
         container.appendChild(itemEl);
     });
 }
-
-// 執行渲染
 renderArchive();
