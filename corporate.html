@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Visual Archive | NI1793</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&family=Rufina:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================= 
+           全域與基礎設定 
+           ================= */
+        :root {
+            --bg-color: #FAFAFA;
+            --text-main: #222222;
+            --text-light: #666666;
+            --accent-color: #B1B479; /* 沿用主站的質感綠金色 */
+            --border-color: #E0E0E0;
+            --font-en-serif: 'Rufina', serif;
+            --font-en-sans: 'Inter', sans-serif;
+            --font-tw: 'Noto Sans TC', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-tw);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+            background-image: linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 2px; 
+            object-fit: cover;
+        }
+
+        section {
+            max-width: 1200px;
+            margin: 0 auto 180px auto; 
+            padding: 0 5vw; 
+        }
+
+        /* 返回按鈕 */
+        .back-btn {
+            position: fixed;
+            top: 40px;
+            left: 5vw;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            color: var(--text-main);
+            font-family: var(--font-en-sans);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background-color: var(--text-main);
+            color: #FFFFFF;
+            transform: translateX(-5px);
+        }
+
+        /* ================= 
+           高級雜誌風：標題設計
+           ================= */
+        .section-header {
+            position: relative;
+            margin-bottom: 80px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-num {
+            font-family: var(--font-en-sans);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-color);
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-family: var(--font-tw);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .section-en-title {
+            position: absolute;
+            right: 0;
+            bottom: -15px;
+            font-family: var(--font-en-serif);
+            font-size: 64px;
+            font-style: italic;
+            color: rgba(0, 0, 0, 0.04); 
+            margin: 0;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .brand-badge {
+            font-family: var(--font-en-sans);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            display: inline-block;
+            padding: 4px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            margin-bottom: 15px;
+            background: #FFF;
+        }
+
+        /* ================= 
+           動態輪播系統 (Sliders)
+           ================= */
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            transform: translateZ(0); /* 硬體加速，讓輪播更滑順 */
+        }
+
+        .slider-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            height: 100%;
+        }
+
+        .slider-track img {
+            flex: 0 0 100%; /* 強制每張圖佔據 100% 寬度 */
+            width: 100%;
+            height: auto;
+        }
+
+        /* 輪播控制按鈕 (預設隱藏，Hover出現) */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            font-size: 16px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 10;
+        }
+
+        .slider-container:hover .slider-btn {
+            opacity: 1; /* 滑鼠經過圖片區域時顯示按鈕 */
+        }
+
+        .slider-btn:hover {
+            background-color: var(--text-main);
+            color: #fff;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-btn.prev { left: 20px; }
+        .slider-btn.next { right: 20px; }
+
+        /* 點點指示器 */
+        .slider-dots {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .slider-dot {
+            width: 6px;
+            height: 6px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .slider-dot.active {
+            background-color: var(--text-main);
+            transform: scale(1.5);
+        }
+
+        /* ================= 
+           第一區塊：前言
+           ================= */
+        #prologue {
+            margin-top: 250px;
+            text-align: center;
+            max-width: 700px;
+        }
+        
+        #prologue h1 {
+            font-family: var(--font-en-serif);
+            font-size: 48px;
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            color: var(--text-main);
+        }
+
+        #prologue .subtitle {
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+        }
+
+        #prologue p {
+            font-size: 15px;
+            line-height: 2.2;
+            color: var(--text-light);
+            text-align: justify;
+        }
+
+        /* ================= 
+           第二區塊：車輛型錄 
+           ================= */
+        .catalog-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6%; /* 在圖片與文字之間保留乾淨的呼吸空間 */
+            margin-bottom: 150px;
+            position: relative;
+        }
+
+        /* 偶數項反向排列，維持視覺節奏 */
+        .catalog-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .catalog-img-wrapper {
+            width: 70%; /* 給予圖片極大的展示空間 */
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.06); /* 給圖片本身加上柔和陰影，提升質感 */
+            border-radius: 4px;
+        }
+
+        .catalog-text-card {
+            width: 24%; /* 文字區塊佔剩下的空間 */
+            background-color: transparent; /* 移除原本的白色擋板 */
+            padding: 0; /* 移除內距 */
+            box-shadow: none; /* 移除陰影 */
+            border: none; /* 移除邊框 */
+            margin: 0 !important; /* 取消所有的負邊距，不重疊 */
+            position: relative;
+        }
+
+        .catalog-text-card p {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 2;
+            margin: 0;
+        }
+
+        .catalog-item:nth-child(even) .catalog-text-card {
+            margin-left: 0;
+            margin-right: -10%;
+        }
+
+        .catalog-text-card p {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 2;
+            margin: 0;
+        }
+
+/* ================= 
+           第三區塊：吉祥物 (雙欄並排畫廊)
+           ================= */
+        .mascot-item {
+            margin-bottom: 120px;
+        }
+
+        .mascot-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 切分成均等的左右兩欄 */
+            gap: 20px; /* 兩張圖片中間的間距 */
+            margin-bottom: 30px;
+        }
+
+        /* 讓吉祥物照片保有高級灰底畫框感 */
+        .mascot-gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #F5F5F5;
+            padding: 20px; 
+            box-sizing: border-box;
+            border-radius: 4px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .mascot-gallery img:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .mascot-text-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .mascot-text-row p {
+            max-width: 70%;
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 0;
+            line-height: 1.8;
+        }
+
+/* ================= 
+           第四區塊：Bento Box (自適應比例瀑布流)
+           ================= */
+        .bento-intro {
+            max-width: 600px;
+            margin-bottom: 50px;
+            font-size: 15px;
+            color: var(--text-light);
+            line-height: 2;
+        }
+
+        /* 改用 CSS Columns 實現純靜態瀑布流，不吃效能且完美貼合圖片比例 */
+        .bento-box {
+            column-count: 4; /* 電腦版維持 4 欄 */
+            column-gap: 20px;
+            width: 100%;
+        }
+
+        .bento-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: 20px; /* 圖片之間的上下間距 */
+            break-inside: avoid; /* 確保圖片不會被跨欄切斷 */
+            display: inline-block;
+            width: 100%;
+        }
+
+        .bento-item img {
+            width: 100%;
+            height: auto; /* 關鍵：高度自動適應上傳的圖片原比例 */
+            object-fit: cover;
+            transition: transform 0.8s ease;
+            display: block;
+        }
+
+        .bento-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        .bento-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* ================= 
+           RWD 手機版設定
+           ================= */
+        @media (max-width: 768px) {
+            #prologue h1 { font-size: 32px; }
+            .section-en-title { font-size: 40px; }
+            
+            
+/* 型錄區塊手機版：上下乾淨排列 */
+            .catalog-item, .catalog-item:nth-child(even) {
+                flex-direction: column;
+                margin-bottom: 90px;
+                gap: 25px; /* 圖片與文字上下的間距 */
+            }
+            .catalog-img-wrapper {
+                width: 100%;
+            }
+            .catalog-text-card {
+                width: 100%;
+                margin: 0 !important; 
+                padding: 0;
+            }
+
+            .mascot-text-row { flex-direction: column; gap: 15px; }
+            .mascot-text-row p { max-width: 100%; }
+            .bento-box {
+                column-count: 2; /* 手機版改為 2 欄 */
+                column-gap: 15px;
+            }
+            .bento-item {
+                margin-bottom: 15px;
+            }
+            
+            .bento-wide { grid-column: span 2; }
+            
+            /* 手機版讓輪播按鈕常駐顯示，方便點擊 */
+            .slider-btn { opacity: 1; width: 36px; height: 36px; font-size: 12px; }
+
+            /* 吉祥物手機版：改為上下排列 */
+            .mascot-gallery { 
+                grid-template-columns: 1fr; 
+                gap: 15px;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <a href="https://ni1793.github.io/portfolio/" class="back-btn">← Back</a>
+
+    <section id="prologue">
+        <h1>Corporate Visual Archive</h1>
+        <div class="subtitle">企業視覺統籌與跨媒材實踐</div>
+        <p>在集團旗下 Alfa Romeo、Citroen、Jeep、Peugeot 四大國際汽車品牌間切換。從嚴謹的車輛資訊架構梳理、立體品牌周邊的材質轉譯，到高張力的數位視覺宣傳。褪去繁複的裝飾，以純粹的視覺對比與網格系統，確保每一次的設計產出皆精準傳達各品牌的獨特核心，並維持極高的跨媒材執行品質。</p>
+    </section>
+
+    <section id="catalogs">
+        <div class="section-header">
+            <span class="section-num">01 / EDITORIAL</span>
+            <h2 class="section-title">型錄排版與資訊層級設計</h2>
+            <h3 class="section-en-title">Vehicle Catalogs</h3>
+        </div>
+
+        <article class="catalog-item">
+            <div class="catalog-img-wrapper slider-container">
+                <div class="slider-track">
+                    <img src="./images/B/alfa01.jpg" loading="lazy" alt="Giulia 實體跨頁翻拍圖">
+                    <img src="./images/B/alfa02.jpg" loading="lazy" alt="Giulia 實體跨頁翻拍圖">
+                    <img src="./images/B/alfa03.jpg" loading="lazy" alt="Giulia QV 實體跨頁翻拍圖">
+                </div>
+            </div>
+            <div class="catalog-text-card">
+                <span class="brand-badge">ALFA ROMEO</span>
+                <p>採用深邃的暗黑基調與科技網格，烘托 Alfa Romeo 純粹的義式競技靈魂。在極致緊湊的版面中，透過高對比的色彩配置（紅/白/黑）與嚴謹的資訊分層，將繁複的駕馭模式與安全科技轉化為直覺的視覺動線，完美展現性能與工藝的結合。</p>
+            </div>
+        </article>
+
+        <article class="catalog-item">
+            <div class="catalog-img-wrapper slider-container">
+                <div class="slider-track">
+                    <img src="./images/B/p01.jpg" loading="lazy" alt="Peugeot 408 實體跨頁翻拍圖">
+                    <img src="./images/B/p02.jpg" loading="lazy" alt="Peugeot 5008 實體跨頁翻拍圖">
+                </div>
+            </div>
+            <div class="catalog-text-card">
+                <span class="brand-badge">PEUGEOT</span>
+                <p>以法式前衛的幾何切割手法，完整駕馭 Peugeot 龐雜的科技與規格資訊。透過靈活的折口版面編排與大膽的視覺引導，讓硬派的機械透視圖與洗鍊的車身線條在頁面中優雅共存，展現獅王般大氣且精細的品牌語彙。</p>
+            </div>
+        </article>
+
+        <article class="catalog-item">
+            <div class="catalog-img-wrapper slider-container">
+                <div class="slider-track">
+                    <img src="./images/B/j01.jpg" loading="lazy" alt="Wrangler 實體跨頁翻拍圖">
+                    <img src="./images/B/j02.jpg" loading="lazy" alt="Wrangler 實體跨頁翻拍圖">
+                </div>
+            </div>
+            <div class="catalog-text-card">
+                <span class="brand-badge">JEEP</span>
+                <p>捨棄繁瑣的裝飾與框架，讓極具張力的壯闊地景成為版面主角。透過無邊際的滿版跨頁影像與強而有力的標題，將 Jeep 無畏邊界的硬派越野精神植入視覺深處，創造出如同翻閱頂級戶外探險雜誌般的沉浸式閱讀體驗。</p>
+            </div>
+        </article>
+
+        <article class="catalog-item">
+            <div class="catalog-img-wrapper slider-container">
+                <div class="slider-track">
+                    <img src="./images/B/c01.jpg" loading="lazy" alt="Berlingo 實體跨頁翻拍圖">
+                </div>
+            </div>
+            <div class="catalog-text-card">
+                <span class="brand-badge">CITROEN</span>
+                <p>運用明亮溫潤的色調與靈活的區塊劃分，呼應 Citroen 舒適活潑的家庭休旅定位。將龐大繁雜的配備表與空間機能，轉化為友善且具呼吸感的閱讀節奏，並巧妙穿插生活情境攝影，精準傳遞「舒適隨心」的法式浪漫哲學。</p>
+            </div>
+        </article>
+    </section>
+
+<section id="mascots">
+        <div class="section-header">
+            <span class="section-num">02 / CHARACTER</span>
+            <h2 class="section-title">角色設計與立體化轉換</h2>
+            <h3 class="section-en-title">Mascot Dolls</h3>
+        </div>
+
+        <article class="mascot-item">
+            <div class="mascot-gallery">
+                <img src="./images/B/馬01.jpg" loading="lazy" alt="獅寶寶 平面圖">
+                <img src="./images/B/馬02.jpg" loading="lazy" alt="獅寶寶 實體娃娃">
+            </div>
+            <div class="mascot-text-row">
+                <span class="brand-badge">PEUGEOT</span>
+                <p>將 Peugeot 充滿力量的獅子意象轉化為具親和力的絨毛玩偶。在 2D 轉 3D 的過程中，精準微調吻部凸出比例與鬃毛層次，確保實體化後依然保有品牌的驕傲與可愛的平衡。精準挑選絨毛材質的長度與色票，將平面的高彩度無縫轉換至實體布料，解決印刷色與紡織品間的色差挑戰。</p>
+            </div>
+        </article>
+    </section>
+
+    <section id="digital-visuals">
+        <div class="section-header">
+            <span class="section-num">03 / DIGITAL</span>
+            <h2 class="section-title">數位宣傳與視覺合成</h2>
+            <h3 class="section-en-title">Visual Layout</h3>
+        </div>
+        
+        <p class="bento-intro">在緊密的幾何邊界內，展現橫跨四大品牌的視覺火力。從 Alfa Romeo 的競速熱血、Peugeot 的法式前衛，到 Citroen 的活潑。精準切換品牌調性，產出符合各平台規範的高張力數位視覺。</p>
+
+        <div class="bento-box">
+            <div class="bento-item bento-wide"><img src="./images/B/poster04.jpg" loading="lazy" alt="Alfa Romeo 網路用圖"></div>
+            <div class="bento-item bento-wide"><img src="./images/B/poster05.jpg" loading="lazy" alt="Alfa Romeo 品牌發表邀請卡"></div>   
+            <div class="bento-item bento-wide"><img src="./images/B/poster06.jpg" loading="lazy" alt="Alfa Romeo 電子賀卡"></div>   
+            <div class="bento-item bento-wide"><img src="./images/B/poster07.jpg" loading="lazy" alt="電子賀卡"></div>   
+            <div class="bento-item bento-wide"><img src="./images/B/poster08.jpg" loading="lazy" alt="電子賀卡"></div>
+            <div class="bento-item bento-wide"><img src="./images/B/poster11.jpg" loading="lazy" alt="Peugeot 戶外看板"></div>
+            <div class="bento-item bento-tall"><img src="./images/B/poster01.jpg" loading="lazy" alt="Peugeot 海報"></div>
+            <div class="bento-item bento-wide"><img src="./images/B/poster02.jpg" loading="lazy" alt="Citroen 海報"></div>
+            <div class="bento-item bento-square"><img src="./images/B/poster03.jpg" loading="lazy" alt="Peugeot 海報"></div>      
+            <div class="bento-item bento-tall"><img src="./images/B/poster09.jpg" loading="lazy" alt="Citroen 海報"></div>
+            <div class="bento-item bento-square"><img src="./images/B/poster10.jpg" loading="lazy" alt="Peugeot 海報"></div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 抓取頁面上所有帶有 slider-container 的區塊
+            document.querySelectorAll('.slider-container').forEach(container => {
+                const track = container.querySelector('.slider-track');
+                const images = track.querySelectorAll('img');
+                
+                // 如果照片只有 1 張，就不需要輪播功能
+                if (images.length <= 1) return; 
+
+                // 1. 自動生成左右箭頭按鈕
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'slider-btn prev';
+                prevBtn.innerHTML = '&#10094;'; // 左箭頭符號
+                
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'slider-btn next';
+                nextBtn.innerHTML = '&#10095;'; // 右箭頭符號
+
+                // 2. 自動生成下方進度點點
+                const dotsContainer = document.createElement('div');
+                dotsContainer.className = 'slider-dots';
+
+                images.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = `slider-dot ${index === 0 ? 'active' : ''}`;
+                    dot.dataset.index = index;
+                    dotsContainer.appendChild(dot);
+                });
+
+                // 將生成的按鈕與點點加入到畫面中
+                container.appendChild(prevBtn);
+                container.appendChild(nextBtn);
+                container.appendChild(dotsContainer);
+
+                // 3. 核心切換邏輯
+                let currentIndex = 0;
+                const dots = dotsContainer.querySelectorAll('.slider-dot');
+
+                function updateSlider() {
+                    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    // 更新點點狀態
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    dots[currentIndex].classList.add('active');
+                }
+
+                nextBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentIndex = (currentIndex + 1) % images.length;
+                    updateSlider();
+                });
+
+                prevBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentIndex = (currentIndex - 1 + images.length) % images.length;
+                    updateSlider();
+                });
+
+                dots.forEach(dot => {
+                    dot.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentIndex = parseInt(dot.dataset.index);
+                        updateSlider();
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

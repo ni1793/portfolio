@@ -315,6 +315,146 @@ transition: opacity 0.5s;
 
 /* style.css */
 
+
+
+/* ================= 
+   企業作品導覽按鈕 (進階設計版)
+   ================= */
+
+/* 外層容器：負責絕對置中與圖層排序 */
+.corporate-link-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 150px 0; /* 加大留白，讓大按鈕有足夠的呼吸空間 */
+    position: relative;
+    z-index: 10; /* 確保浮在 WebGL 畫布上方 */
+}
+
+/* 按鈕本體設計：大型膠囊卡片 */
+.btn-corporate-archive {
+    display: inline-flex;
+    align-items: center;
+    gap: 24px; /* 加大元素間距 */
+    padding: 20px 24px 20px 48px; /* 加大整體內距，右側留給圓形 Icon */
+    background-color: #FFFFFF; 
+    color: #111111; 
+    border: 1px solid #EAEAEA; 
+    border-radius: 100px; /* 超圓角膠囊形狀 */
+    text-decoration: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); /* 更柔和寬廣的陰影 */
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: none !important; /* 配合你的自訂游標系統 */
+}
+
+/* 英文主標題：採用襯線體展現藝術感 */
+.btn-corporate-archive .btn-title {
+    font-family: 'Rufina', serif; 
+    font-size: 24px; /* 字級放大 */
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    transition: color 0.5s ease;
+}
+
+/* 精緻的分隔直線 */
+.btn-corporate-archive .btn-divider {
+    width: 1px;
+    height: 28px;
+    background-color: #DDDDDD;
+    transition: background-color 0.5s ease;
+}
+
+/* 中文副標題：俐落無襯線體 */
+.btn-corporate-archive .btn-subtitle {
+    font-family: 'Noto Sans TC', 'Inter', sans-serif;
+    font-size: 15px;
+    color: #666666;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    transition: color 0.5s ease;
+}
+
+/* 獨立的圓形箭頭 Icon */
+.btn-corporate-archive .btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background-color: #434343;
+    color: #FFFFFF;
+    border-radius: 50%;
+    font-size: 16px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ======== 滑鼠懸停 (Hover) 的戲劇性反轉 ======== */
+
+.btn-corporate-archive:hover {
+    background-color: #434343;
+    border-color: #434343;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px) scale(1.02); /* 整體上浮並微幅放大 */
+}
+
+.btn-corporate-archive:hover .btn-title {
+    color: #FFFFFF; /* 標題反白 */
+}
+
+.btn-corporate-archive:hover .btn-divider {
+    background-color: #444444; /* 分隔線變暗 */
+}
+
+.btn-corporate-archive:hover .btn-subtitle {
+    color: #BBBBBB; /* 副標維持層次感 */
+}
+
+.btn-corporate-archive:hover .btn-icon {
+    background-color: #FFFFFF; /* 圓圈反白 */
+    color: #434343; /* 箭頭變黑 */
+    transform: translateX(4px) rotate(-45deg); /* 箭頭往右跳動，並帶有指向右上方的動態感 */
+}
+/* ================= 
+   企業作品導覽按鈕 (手機版 RWD 縮放)
+   ================= */
+@media (max-width: 768px) {
+    .corporate-link-wrapper {
+        margin: 80px 0; /* 縮小手機版的上下留白，避免佔用太多螢幕高度 */
+        padding: 0 20px; /* 增加左右安全距離，避免按鈕貼齊螢幕邊緣 */
+    }
+
+    .btn-corporate-archive {
+        padding: 12px 14px 12px 24px; /* 全面縮小內距 */
+        gap: 12px; /* 縮小文字與 Icon 之間的距離 */
+        white-space: nowrap; /* 強制不換行，保持完美的膠囊形狀 */
+    }
+
+    .btn-corporate-archive .btn-title {
+        font-size: 16px; /* 英文主標題縮小 */
+    }
+
+    .btn-corporate-archive .btn-divider {
+        height: 18px; /* 分隔線跟著縮短 */
+    }
+
+    .btn-corporate-archive .btn-subtitle {
+        font-size: 12px; /* 中文副標題縮小 */
+        letter-spacing: 0.05em;
+    }
+
+    .btn-corporate-archive .btn-icon {
+        width: 32px; /* 圓形 Icon 縮小 */
+        height: 32px;
+        font-size: 13px; /* 箭頭縮小 */
+    }
+}
+
+
+
+
+
+
 /* =========================================
    新增：WebGL 過渡區塊樣式
    ========================================= */
