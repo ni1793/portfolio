@@ -62,7 +62,8 @@ const aiImages = [
     "images/album/a2/03.jpg", "images/album/a3/01.jpg", "images/album/a3/02.jpg", "images/album/a3/03.jpg", 
     "images/album/a4/01.jpg", "images/album/a4/02.jpg", "images/album/a4/03.jpg", "images/album/a4/04.jpg", 
     "images/album/a5/01.jpg", "images/album/a5/02.jpg", "images/album/a5/03.jpg", "images/album/a5/04.jpg", "images/album/a5/05.jpg", 
-    "images/album/a6/01.jpg", "images/album/a6/02.jpg", "images/album/a6/03.jpg", "images/album/a6/04.jpg", "images/album/a6/05.jpg", "images/album/a6/06.jpg"
+    "images/album/a6/01.jpg", "images/album/a6/02.jpg", "images/album/a6/03.jpg", "images/album/a6/04.jpg", "images/album/a6/05.jpg", "images/album/a6/06.jpg", 
+    "images/album/a7/01.jpg", "images/album/a7/02.jpg", "images/album/a7/03.jpg", "images/album/a7/04.jpg", "images/album/a7/05.jpg"
 ];
 
 const desktopWidgets = [
